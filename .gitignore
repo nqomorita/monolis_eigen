@@ -11,5 +11,5 @@ monolis_solid
 *.txt
 *.[0-9]
 .DS_STORE
-submodule/
+submodule
 

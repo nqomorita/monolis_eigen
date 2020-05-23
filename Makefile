@@ -28,7 +28,7 @@ SRC_DIR  = ./src
 OBJ_DIR  = ./obj
 BIN_LIST = sfem
 TARGET   = $(addprefix $(BIN_DIR)/, $(BIN_LIST))
-SRC_LIST = util.f90 test.f90 mesher.f90 shape_C2D4.f90 shape_C3D8.f90 element_C3D8.f90 dynamic.f90 matrix.f90 update.f90 solver.f90 io.f90 kgl.f90 remesh.f90 analysis.f90 main.f90
+SRC_LIST = util.f90 main.f90
 SOURCES  = $(addprefix $(SRC_DIR)/, $(SRC_LIST))
 OBJS     = $(subst $(SRC_DIR), $(OBJ_DIR), $(SOURCES:.f90=.o))
 RM       = rm
