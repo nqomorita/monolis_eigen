@@ -102,7 +102,7 @@ contains
     !allocate(mesh%v_prev (3*mesh%nnode), source = 0.0d0)
   end subroutine init_mesh
 
-  subroutine init_matrix_soild(mesh, mat)
+  subroutine init_matrix(mesh, mat)
     use iso_c_binding
     implicit none
     type(meshdef) :: mesh
@@ -134,7 +134,7 @@ contains
       enddo
       call monolis_qsort_int(mat%item(jS:jE), 1, jE - jS + 1)
     enddo
-  end subroutine init_matrix_soild
+  end subroutine init_matrix
 
   subroutine finalize_mesh(mesh)
     implicit none

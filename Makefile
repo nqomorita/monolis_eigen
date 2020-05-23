@@ -1,7 +1,7 @@
 
 FC       = mpif90
-FFLAGS   = -O3 -mtune=native -march=native -mfpmath=both
-#FFLAGS   = -O2 -fbounds-check -fbacktrace -Wuninitialized -ffpe-trap=invalid,zero,overflow
+#FFLAGS   = -O3 -mtune=native -march=native -mfpmath=both
+FFLAGS   = -O2 -fbounds-check -fbacktrace -Wuninitialized -ffpe-trap=invalid,zero,overflow
 LDFLAGS  =
 CPP       = -cpp
 
@@ -28,7 +28,7 @@ SRC_DIR  = ./src
 OBJ_DIR  = ./obj
 BIN_LIST = monolis_solid
 TARGET   = $(addprefix $(BIN_DIR)/, $(BIN_LIST))
-SRC_LIST = util.f90 debug.f90 io.f90 main.f90
+SRC_LIST = util.f90 debug.f90 io.f90 matrix.f90 analysis.f90 main.f90
 SOURCES  = $(addprefix $(SRC_DIR)/, $(SRC_LIST))
 OBJS     = $(subst $(SRC_DIR), $(OBJ_DIR), $(SOURCES:.f90=.o))
 RM       = rm

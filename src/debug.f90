@@ -13,7 +13,7 @@ module mod_soild_debug
   public :: soild_plot_time
   public :: soild_plot_solver
 
-  integer(kint), save :: myrank
+  integer(kint), save :: myrank = 0
   integer(kint), parameter :: flog = 30
 
 contains
@@ -51,7 +51,7 @@ contains
 
   subroutine soild_debug_int(header, n)
     implicit none
-    integer(kind=kint) :: n
+    integer(kint) :: n
     character(*) :: header
 
     if(myrank == 0) write(*,"(a,i12)")"** soild debug: "//trim(header)//": ", n
@@ -59,7 +59,7 @@ contains
 
   subroutine soild_debug_real(header, r)
     implicit none
-    real(kind=kdouble) :: r
+    real(kdouble) :: r
     character(*) :: header
 
     if(myrank == 0) write(*,"(a,1pe12.5)")"** soild debug: "//trim(header)//": ", r
@@ -82,34 +82,34 @@ contains
 
   subroutine soild_debug_time(step, time)
     implicit none
-    integer(kind=kint) :: step
-    real(kind=kdouble) :: time
+    integer(kint) :: step
+    real(kdouble) :: time
     if(myrank == 0)then
       write(*,"(a,i8,1pe12.5)")"* current time step: ", step, time
-      write(flog,"(a,i8,1pe12.5)")"* current time step: ", step, time
+      !write(flog,"(a,i8,1pe12.5)")"* current time step: ", step, time
     endif
   end subroutine soild_debug_time
 
   subroutine soild_plot_time(header, time)
     implicit none
-    real(kind=kdouble) :: time
+    real(kdouble) :: time
     character(*) :: header
 
     if(myrank == 0)then
       write(*,"(a,1pe10.3,a)")"  - "//trim(header)//" elapse time: ", time, " [sec]"
-      write(flog,"(a,1pe10.3,a)")"  - "//trim(header)//" elapse time: ", time, " [sec]"
+      !write(flog,"(a,1pe10.3,a)")"  - "//trim(header)//" elapse time: ", time, " [sec]"
     endif
   end subroutine soild_plot_time
 
   subroutine soild_plot_solver(iter, resid)
     implicit none
-    integer(kind=kint) :: iter
-    real(kind=kdouble) :: resid
+    integer(kint) :: iter
+    real(kdouble) :: resid
 
-    if(myrank == 0)then
-      write(flog,"(a,i8)")     "  - monolis converge iter    :", iter
-      write(flog,"(a,1pe10.3)")"  - monolis converge residual:", resid
-    endif
+    !if(myrank == 0)then
+    !  write(flog,"(a,i8)")     "  - monolis converge iter    :", iter
+    !  write(flog,"(a,1pe10.3)")"  - monolis converge residual:", resid
+    !endif
   end subroutine soild_plot_solver
 
 end module mod_soild_debug
