@@ -11,7 +11,7 @@ program main
   real(kdouble) :: t1, t2, t3
 
   call monolis_initialize(monolis)
-  call soild_test_set_myrank(monolis%COM%myrank)
+  call soild_debug_set_myrank(monolis%COM%myrank)
   t1 = monolis_get_time()
 
   !> FEM part

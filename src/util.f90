@@ -6,8 +6,8 @@ module mod_soild_util
   logical, save :: isdebug = .true.
 
   type gaussdef
-    real(kdouble) :: strain(6) = 0.0d0
-    real(kdouble) :: stress(6) = 0.0d0
+    real(kdouble) :: strain(6)
+    real(kdouble) :: stress(6)
   end type gaussdef
 
   type matdef
@@ -80,6 +80,7 @@ contains
     implicit none
     type(meshdef) :: mesh
     type(vardef) :: var
+    integer(kint) :: i, j
 
     allocate(var%gauss(8, mesh%nelem))
     allocate(var%nstrain(6, mesh%nnode), source = 0.0d0)
@@ -93,6 +94,13 @@ contains
     allocate(var%q (3*mesh%nnode), source = 0.0d0)
     allocate(var%f (3*mesh%nnode), source = 0.0d0)
     allocate(var%f_reaction (3*mesh%nnode), source = 0.0d0)
+
+    do i = 1, mesh%nelem
+      do j = 1, 8
+        var%gauss(j,i)%strain = 0.0d0
+        var%gauss(j,i)%stress = 0.0d0
+      enddo
+    enddo
   end subroutine init_mesh
 
   subroutine init_matrix(mesh, mat)
@@ -108,8 +116,8 @@ contains
     nnode = mesh%nnode
     mat%n = nnode
     mat%ndof = ndof
-    allocate(mat%x(ndof*nnode), source = 0.0d0)
-    allocate(mat%b(ndof*nnode), source = 0.0d0)
+    allocate(mat%X(ndof*nnode), source = 0.0d0)
+    allocate(mat%B(ndof*nnode), source = 0.0d0)
     allocate(mat%index(0:nnode), source = 0)
     do i = 1, nnode
       mat%index(i) = index(i+1) + i

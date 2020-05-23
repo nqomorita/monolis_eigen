@@ -69,7 +69,7 @@ contains
 
     do icel = 1, mesh%nelem
       call C3D8_update(mesh, var, param, icel, q)
-      call C3D8_get_nodal_values(mesh, icel, inv, nstrain, nstress, estrain, estress)
+      call C3D8_get_nodal_values(var, icel, inv, nstrain, nstress, estrain, estress)
 
       do i = 1, 8
         in = mesh%elem(i,icel)

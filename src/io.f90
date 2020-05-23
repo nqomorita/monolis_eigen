@@ -30,6 +30,7 @@ contains
 
     fname = "node.dat"
     call monolis_input_mesh_node(fname, mesh%nnode, mesh%node, mesh%nid)
+    mesh%nnode_in = mesh%nnode
 
     fname = "elem.dat"
     call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem, mesh%eid)
@@ -42,6 +43,11 @@ contains
 
     call global_to_local(mesh%nnode, mesh%nid, mesh%nelem, mesh%elem, mesh%nbase_func, &
       param%nbound, param%ibound, param%ncload, param%icload)
+
+    call soild_debug_int("nnode", mesh%nnode)
+    call soild_debug_int("nnode", mesh%nelem)
+    call soild_debug_int("nbound", param%nbound)
+    call soild_debug_int("ncload", param%ncload)
   end subroutine soild_input_mesh
 
   subroutine global_to_local(nnode, nid, nelem, e, nenode, nb, b, nc, c)

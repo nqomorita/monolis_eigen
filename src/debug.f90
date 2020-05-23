@@ -2,7 +2,7 @@ module mod_soild_debug
   use mod_soild_util
 
   private
-  public :: soild_test_set_myrank
+  public :: soild_debug_set_myrank
   public :: soild_write_header
   public :: soild_debug_header
   public :: soild_debug_int
@@ -18,7 +18,7 @@ module mod_soild_debug
 
 contains
 
-  subroutine soild_test_set_myrank(set)
+  subroutine soild_debug_set_myrank(set)
     implicit none
     integer(kint) :: set
     character :: output_dir*100
@@ -31,7 +31,7 @@ contains
     !  open(flog, file = "./log/analysis.log", status = "replace")
     !  write(flog, "(a)")"* s-version FEM analysis"
     !endif
-  end subroutine soild_test_set_myrank
+  end subroutine soild_debug_set_myrank
 
   subroutine soild_write_header(header)
     implicit none
