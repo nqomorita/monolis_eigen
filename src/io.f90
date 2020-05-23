@@ -3,46 +3,6 @@ module mod_soild_io
   use mod_soild_debug
 contains
 
-  subroutine soild_input_mesh(mesh)
-    implicit none
-    type(meshdef) :: mesh
-    integer(kint) :: i, in, id, ig, il
-    integer(kint), allocatable :: nid(:), permG(:), permL(:)
-    character :: cnum*5, header*7
-
-    call soild_debug_header("soild_input_mesh")
-
-    !open(10, file="bc.dat", status='old')
-    !  read(10,*)meshG%nbound
-    !  allocate(meshG%ibound(2, meshG%nbound))
-    !  allocate(meshG%bound (meshG%nbound))
-    !  do i = 1, meshG%nbound
-    !    read(10,*) in, meshG%ibound(2,i), meshG%bound(i)
-    !    call monolis_bsearch_int(nid, 1, meshG%nnode, in, id)
-    !    if(id == -1)then
-    !      meshG%ibound(1,i) = -1
-    !    else
-    !      meshG%ibound(1,i) = permG(id)
-    !    endif
-    !  enddo
-    !close(10)
-
-    !open(10, file="load.dat", status='old')
-    !  read(10,*)meshG%ncload
-    !  allocate(meshG%icload(2, meshG%ncload))
-    !  allocate(meshG%cload (meshG%ncload))
-    !  do i = 1, meshG%ncload
-    !    read(10,*) in, meshG%icload(2,i), meshG%cload(i)
-    !    call monolis_bsearch_int(nid, 1, meshG%nnode, in, id)
-    !    if(id == -1)then
-    !      meshG%icload(1,i) = -1
-    !    else
-    !      meshG%icload(1,i) = permG(id)
-    !    endif
-    !  enddo
-    !close(10)
-  end subroutine soild_input_mesh
-
   subroutine soild_input_param(param)
     implicit none
     type(paramdef) :: param
@@ -58,46 +18,67 @@ contains
     close(10)
   end subroutine soild_input_param
 
-  subroutine convert_to_real(mesh, var)
+  subroutine soild_input_mesh(mesh, param)
     implicit none
     type(meshdef) :: mesh
-    type(vardef) :: var
-    integer(kint) :: i, j, nnode, nelem
-    real(kind=kdouble) :: thr
+    type(paramdef) :: param
+    integer(kint) :: i, in
+    integer(kint), allocatable :: nid(:), perm(:)
+    character :: cnum*5, fname*100
 
-    nnode = mesh%nnode
-    nelem = mesh%nelem
-    thr = 1.0d-30
+    call soild_debug_header("soild_input_mesh")
 
+    fname = "node.dat"
+    call monolis_input_mesh_node(fname, mesh%nnode, mesh%node, mesh%nid)
+
+    fname = "elem.dat"
+    call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem, mesh%eid)
+
+    fname = "bc.dat"
+    call monolis_input_condition(fname, param%nbound, param%ibound, param%bound)
+
+    fname = "load.dat"
+    call monolis_input_condition(fname, param%ncload, param%icload, param%cload)
+
+    call global_to_local(mesh%nnode, mesh%nid, mesh%nelem, mesh%elem, mesh%nbase_func, &
+      param%nbound, param%ibound, param%ncload, param%icload)
+  end subroutine soild_input_mesh
+
+  subroutine global_to_local(nnode, nid, nelem, e, nenode, nb, b, nc, c)
+    implicit none
+    integer(kint) :: i, in, j, nenode
+    integer(kint) :: imax, imin, nb, nc
+    integer(kint) :: nnode, nid(:)
+    integer(kint) :: nelem, e(:,:), b(:,:), c(:,:)
+    integer(kint), allocatable :: temp(:)
+
+    imax = maxval(nid)
+    imin = minval(nid)
+    allocate(temp(imin:imax), source = -1)
+
+    in = 1
     do i = 1, nnode
-      if(var%nmises(i) < thr) var%nmises(i) = 0.0d0
-    enddo
-
-    do i = 1, nnode
-      do j = 1, 3
-        if(dabs(var%u    (3*i-3+j)) < thr) var%u    (3*i-3+j) = 0.0d0
-        if(dabs(var%f_reaction(3*i-3+j)) < thr) var%f_reaction(3*i-3+j) = 0.0d0
-      enddo
-    enddo
-
-    do i = 1, nnode
-      do j = 1, 6
-        if(dabs(var%nstrain(j,i)) < thr) var%nstrain(j,i) = 0.0d0
-        if(dabs(var%nstress(j,i)) < thr) var%nstress(j,i) = 0.0d0
-      enddo
+      temp(nid(i)) = in
+      in = in + 1
     enddo
 
     do i = 1, nelem
-      if(dabs(var%emises(i)) < thr) var%emises(i) = 0.0d0
-    enddo
-
-    do i = 1, nelem
-      do j = 1, 6
-        if(dabs(var%estrain(j,i)) < thr) var%estrain(j,i) = 0.0d0
-        if(dabs(var%estress(j,i)) < thr) var%estress(j,i) = 0.0d0
+      do j = 1, nenode
+        in = e(j,i)
+        e(j,i) = temp(in)
       enddo
     enddo
-  end subroutine convert_to_real
+
+    do i = 1, nb
+      in = b(1,i)
+      b(1,i) = temp(in)
+    enddo
+
+    do i = 1, nc
+      in = c(1,i)
+      c(1,i) = temp(in)
+    enddo
+  end subroutine global_to_local
 
   subroutine outout_res(mesh, param, var)
     implicit none
@@ -249,4 +230,44 @@ contains
     close(20)
   end subroutine outout_res
 
+  subroutine convert_to_real(mesh, var)
+    implicit none
+    type(meshdef) :: mesh
+    type(vardef) :: var
+    integer(kint) :: i, j, nnode, nelem
+    real(kind=kdouble) :: thr
+
+    nnode = mesh%nnode
+    nelem = mesh%nelem
+    thr = 1.0d-30
+
+    do i = 1, nnode
+      if(var%nmises(i) < thr) var%nmises(i) = 0.0d0
+    enddo
+
+    do i = 1, nnode
+      do j = 1, 3
+        if(dabs(var%u    (3*i-3+j)) < thr) var%u    (3*i-3+j) = 0.0d0
+        if(dabs(var%f_reaction(3*i-3+j)) < thr) var%f_reaction(3*i-3+j) = 0.0d0
+      enddo
+    enddo
+
+    do i = 1, nnode
+      do j = 1, 6
+        if(dabs(var%nstrain(j,i)) < thr) var%nstrain(j,i) = 0.0d0
+        if(dabs(var%nstress(j,i)) < thr) var%nstress(j,i) = 0.0d0
+      enddo
+    enddo
+
+    do i = 1, nelem
+      if(dabs(var%emises(i)) < thr) var%emises(i) = 0.0d0
+    enddo
+
+    do i = 1, nelem
+      do j = 1, 6
+        if(dabs(var%estrain(j,i)) < thr) var%estrain(j,i) = 0.0d0
+        if(dabs(var%estress(j,i)) < thr) var%estress(j,i) = 0.0d0
+      enddo
+    enddo
+  end subroutine convert_to_real
 end module mod_soild_io

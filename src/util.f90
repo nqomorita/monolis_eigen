@@ -24,10 +24,10 @@ module mod_soild_util
     integer(kint) :: nelem
     integer(kint) :: nelem_in
     integer(kint) :: nbase_func
-    integer(kint), pointer :: nid(:)
-    integer(kint), pointer :: eid(:)
-    real(kdouble), pointer :: node(:,:)
-    integer(kint), pointer :: elem(:,:)
+    integer(kint), allocatable :: nid(:)
+    integer(kint), allocatable :: eid(:)
+    real(kdouble), allocatable :: node(:,:)
+    integer(kint), allocatable :: elem(:,:)
   end type meshdef
 
   type paramdef
@@ -42,13 +42,12 @@ module mod_soild_util
 
     !> for boundary condition
     integer(kint) :: nbound
-    integer(kint), pointer :: ibound(:,:)
-    real(kdouble), pointer :: bound(:)
-    integer(kint), pointer :: is_bound(:)
+    integer(kint), allocatable :: ibound(:,:)
+    real(kdouble), allocatable :: bound(:)
 
     integer(kint) :: ncload
-    integer(kint), pointer :: icload(:,:)
-    real(kdouble), pointer :: cload(:)
+    integer(kint), allocatable :: icload(:,:)
+    real(kdouble), allocatable :: cload(:)
 
     !> for material property
     real(kdouble) :: E, mu, rho
@@ -56,50 +55,44 @@ module mod_soild_util
 
   type vardef
     !> for analysis
-    real(kdouble), pointer :: x(:)  !> solution vector of Ax = b
-    real(kdouble), pointer :: u(:)  !> displacement
-    real(kdouble), pointer :: du(:) !> delta displacement
-    real(kdouble), pointer :: q(:)  !> internal force
-    real(kdouble), pointer :: f(:)  !> external force
-    real(kdouble), pointer :: f_reaction(:) !> reaction force
+    real(kdouble), allocatable :: x(:)  !> solution vector of Ax = b
+    real(kdouble), allocatable :: u(:)  !> displacement
+    real(kdouble), allocatable :: du(:) !> delta displacement
+    real(kdouble), allocatable :: q(:)  !> internal force
+    real(kdouble), allocatable :: f(:)  !> external force
+    real(kdouble), allocatable :: f_reaction(:) !> reaction force
 
     !> for results
-    type(gaussdef), pointer :: gauss(:,:)
-    real(kdouble), pointer :: nstrain(:,:)
-    real(kdouble), pointer :: nstress(:,:)
-    real(kdouble), pointer :: nmises(:)
-    real(kdouble), pointer :: estrain(:,:)
-    real(kdouble), pointer :: estress(:,:)
-    real(kdouble), pointer :: emises(:)
+    type(gaussdef), allocatable :: gauss(:,:)
+    real(kdouble), allocatable :: nstrain(:,:)
+    real(kdouble), allocatable :: nstress(:,:)
+    real(kdouble), allocatable :: nmises(:)
+    real(kdouble), allocatable :: estrain(:,:)
+    real(kdouble), allocatable :: estress(:,:)
+    real(kdouble), allocatable :: emises(:)
   end type vardef
 
   type(monolis_structure) :: monolis
 
 contains
 
-  subroutine init_mesh(mesh)
+  subroutine init_mesh(mesh, var)
     implicit none
     type(meshdef) :: mesh
+    type(vardef) :: var
 
-    !allocate(mesh%gauss(8, mesh%nelem))
-    !allocate(mesh%nstrain(6, mesh%nnode), source = 0.0d0)
-    !allocate(mesh%nstress(6, mesh%nnode), source = 0.0d0)
-    !allocate(mesh%nmises (mesh%nnode), source = 0.0d0)
-    !allocate(mesh%estrain(6, mesh%nelem), source = 0.0d0)
-    !allocate(mesh%estress(6, mesh%nelem), source = 0.0d0)
-    !allocate(mesh%emises (mesh%nelem), source = 0.0d0)
-    !allocate(mesh%u (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%du(3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%q (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%f (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%f_reaction (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%f_reaction_raw (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%traction (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%g (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%a (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%a_prev (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%v (3*mesh%nnode), source = 0.0d0)
-    !allocate(mesh%v_prev (3*mesh%nnode), source = 0.0d0)
+    allocate(var%gauss(8, mesh%nelem))
+    allocate(var%nstrain(6, mesh%nnode), source = 0.0d0)
+    allocate(var%nstress(6, mesh%nnode), source = 0.0d0)
+    allocate(var%nmises (mesh%nnode), source = 0.0d0)
+    allocate(var%estrain(6, mesh%nelem), source = 0.0d0)
+    allocate(var%estress(6, mesh%nelem), source = 0.0d0)
+    allocate(var%emises (mesh%nelem), source = 0.0d0)
+    allocate(var%u (3*mesh%nnode), source = 0.0d0)
+    allocate(var%du(3*mesh%nnode), source = 0.0d0)
+    allocate(var%q (3*mesh%nnode), source = 0.0d0)
+    allocate(var%f (3*mesh%nnode), source = 0.0d0)
+    allocate(var%f_reaction (3*mesh%nnode), source = 0.0d0)
   end subroutine init_mesh
 
   subroutine init_matrix(mesh, mat)
@@ -136,9 +129,10 @@ contains
     enddo
   end subroutine init_matrix
 
-  subroutine finalize_mesh(mesh)
+  subroutine finalize_mesh(mesh, var)
     implicit none
     type(meshdef) :: mesh
+    type(vardef) :: var
 
     !if(associated(mesh%node)) deallocate(mesh%node)
     !if(associated(mesh%elem)) deallocate(mesh%elem)

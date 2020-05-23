@@ -17,7 +17,7 @@ program main
   !> FEM part
   call soild_write_header("Solid FEM")
   call soild_input_param(param)
-  call soild_input_mesh(mesh)
+  call soild_input_mesh(mesh, param)
 
   t2 = monolis_get_time()
   call soild_plot_time("input", t2 - t1)
