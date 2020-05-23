@@ -22,8 +22,10 @@ module mod_soild_util
   type meshdef
     integer(kint) :: nnode
     integer(kint) :: nelem
-    integer(kint), pointer :: global_nid(:)
-    integer(kint), pointer :: global_eid(:)
+    integer(kint) :: nelem_in
+    integer(kint) :: nbase_func
+    integer(kint), pointer :: nid(:)
+    integer(kint), pointer :: eid(:)
     real(kdouble), pointer :: node(:,:)
     integer(kint), pointer :: elem(:,:)
   end type meshdef
@@ -31,8 +33,8 @@ module mod_soild_util
   type paramdef
     !> for time step loop
     integer(kint) :: cur_time_step
-    integer(kint) :: max_time_step
-    real(kdouble) :: delta_t
+    !integer(kint) :: max_time_step
+    !real(kdouble) :: delta_t
 
     !> for NR loop
     integer(kint) :: cur_nrstep
@@ -52,22 +54,14 @@ module mod_soild_util
     real(kdouble) :: E, mu, rho
   end type paramdef
 
-  type varmdef
+  type vardef
     !> for analysis
     real(kdouble), pointer :: x(:)  !> solution vector of Ax = b
-    real(kdouble), pointer :: x_raw(:)  !> solution vector of Ax = b
     real(kdouble), pointer :: u(:)  !> displacement
     real(kdouble), pointer :: du(:) !> delta displacement
     real(kdouble), pointer :: q(:)  !> internal force
     real(kdouble), pointer :: f(:)  !> external force
     real(kdouble), pointer :: f_reaction(:) !> reaction force
-    real(kdouble), pointer :: f_reaction_raw(:) !> reaction force
-    real(kdouble), pointer :: traction(:) !> reaction force
-    real(kdouble), pointer :: g(:)  !> vector for Newmark-Beta
-    real(kdouble), pointer :: a(:)  !> acceleration
-    real(kdouble), pointer :: a_prev(:)  !> previous acceleration
-    real(kdouble), pointer :: v(:)  !> velosity
-    real(kdouble), pointer :: v_prev(:)  !> previous velosity
 
     !> for results
     type(gaussdef), pointer :: gauss(:,:)
@@ -77,7 +71,7 @@ module mod_soild_util
     real(kdouble), pointer :: estrain(:,:)
     real(kdouble), pointer :: estress(:,:)
     real(kdouble), pointer :: emises(:)
-  end type varmdef
+  end type vardef
 
   type(monolis_structure) :: monolis
 

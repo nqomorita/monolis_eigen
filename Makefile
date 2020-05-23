@@ -26,9 +26,9 @@ MOD_DIR  = -J ./include
 BIN_DIR  = ./bin
 SRC_DIR  = ./src
 OBJ_DIR  = ./obj
-BIN_LIST = sfem
+BIN_LIST = monolis_solid
 TARGET   = $(addprefix $(BIN_DIR)/, $(BIN_LIST))
-SRC_LIST = util.f90 main.f90
+SRC_LIST = util.f90 debug.f90 io.f90 main.f90
 SOURCES  = $(addprefix $(SRC_DIR)/, $(SRC_LIST))
 OBJS     = $(subst $(SRC_DIR), $(OBJ_DIR), $(SOURCES:.f90=.o))
 RM       = rm
