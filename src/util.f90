@@ -21,8 +21,8 @@ module mod_soild_util
 
   type meshdef
     integer(kint) :: nnode
+    integer(kint) :: nnode_in
     integer(kint) :: nelem
-    integer(kint) :: nelem_in
     integer(kint) :: nbase_func
     integer(kint), allocatable :: nid(:)
     integer(kint), allocatable :: eid(:)
@@ -55,7 +55,7 @@ module mod_soild_util
 
   type vardef
     !> for analysis
-    real(kdouble), allocatable :: x(:)  !> solution vector of Ax = b
+    real(kdouble), pointer :: x(:)  !> solution vector of Ax = b
     real(kdouble), allocatable :: u(:)  !> displacement
     real(kdouble), allocatable :: du(:) !> delta displacement
     real(kdouble), allocatable :: q(:)  !> internal force

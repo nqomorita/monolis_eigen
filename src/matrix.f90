@@ -1,13 +1,15 @@
 module mod_soild_matrix
   use mod_soild_util
   use mod_soild_debug
-  !use mod_soild_c3d8
+  use mod_soild_c3d8
 
 contains
 
-  subroutine get_stiff_matrix(mesh, mat)
+  subroutine get_stiff_matrix(mesh, var, param, mat)
     implicit none
     type(meshdef) :: mesh
+    type(vardef) :: var
+    type(paramdef) :: param
     type(matdef) :: mat
     integer(kint) :: i, icel
     integer(kint) :: elem(8)
@@ -20,7 +22,7 @@ contains
       do i = 1, 8
         elem(i) = mesh%elem(i, icel)
       enddo
-      !call C3D8_stiff(mesh, icel, elem, stiff)
+      call C3D8_stiff(mesh, var, param, icel, elem, stiff)
       call monolis_sparse_matrix_assemble(mat%index, mat%item, mat%A, 8, 3, elem, elem, stiff)
     enddo
   end subroutine get_stiff_matrix

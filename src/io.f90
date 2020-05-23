@@ -85,14 +85,13 @@ contains
     type(paramdef) :: param
     type(meshdef) :: mesh
     type(vardef) :: var
-    integer(kint) :: i, id, nnode, nelem, nelem_in
+    integer(kint) :: i, id, nnode, nelem
     character :: cstep*5, cnum*5, output_dir*100
 
     call soild_debug_header("outout_res")
 
     nnode = mesh%nnode
     nelem = mesh%nelem
-    nelem_in = mesh%nelem_in
 
     output_dir = "visual/"
     call system('if [ ! -d visual ]; then (echo "** create visual"; mkdir -p visual); fi')

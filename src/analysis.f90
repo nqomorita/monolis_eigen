@@ -2,6 +2,8 @@ module mod_soild_analysis
   use mod_soild_util
   use mod_soild_io
   use mod_soild_matrix
+  use mod_soild_solver
+  use mod_soild_update
   use mod_soild_debug
 
 contains
@@ -28,7 +30,7 @@ contains
     t2 = monolis_get_time_sync()
     call soild_plot_time("nonzero detection", t2 - t1)
 
-    call get_stiff_matrix(mesh, mat)
+    call get_stiff_matrix(mesh, var, param, mat)
     call load_condition(var, param)
     call get_RHS(mesh, var, mat)
     call bound_condition(mesh, param, mat)
@@ -36,15 +38,14 @@ contains
     t3 = monolis_get_time_sync()
     call soild_plot_time("matrix generation", t3 - t2)
 
-    !call solver(mesh, mat)
+    call solver(mesh, var, mat)
 
     t4 = monolis_get_time_sync()
     call soild_plot_time("solver", t4 - t3)
 
-    !call get_reaction_force(mesh, meshL)
-    !call stress_update(mesh, meshL)
-    !call delta_u_update(mesh)
-    !call u_update(mesh)
+    call stress_update(mesh, var, param)
+    call delta_u_update(mesh, var)
+    call u_update(mesh, var)
 
     t5 = monolis_get_time_sync()
     call soild_plot_time("stress calculation", t5 - t4)
