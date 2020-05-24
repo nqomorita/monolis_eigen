@@ -46,6 +46,8 @@ contains
 
       call modify_finename("elem", fname)
       call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem, mesh%eid)
+
+      call global_to_local_elem(mesh%nnode, mesh%nid, mesh%nelem, mesh%elem, mesh%nbase_func)
     endif
 
     fname = "bc.dat"
@@ -54,8 +56,7 @@ contains
     fname = "load.dat"
     call monolis_input_condition(fname, param%ncload, param%icload, param%cload)
 
-    call global_to_local(mesh%nnode, mesh%nid, mesh%nelem, mesh%elem, mesh%nbase_func, &
-      param%nbound, param%ibound, param%ncload, param%icload)
+    call global_to_local_conditoin(mesh%nnode, mesh%nid, param%nbound, param%ibound, param%ncload, param%icload)
 
     call soild_debug_int("nnode", mesh%nnode)
     call soild_debug_int("nnode", mesh%nelem)
@@ -77,12 +78,11 @@ contains
     endif
   end subroutine modify_finename
 
-  subroutine global_to_local(nnode, nid, nelem, e, nenode, nb, b, nc, c)
+  subroutine global_to_local_elem(nnode, nid, nelem, e, nenode)
     implicit none
     integer(kint) :: i, in, j, id, nenode
-    integer(kint) :: imax, imin, nb, nc
     integer(kint) :: nnode, nid(:)
-    integer(kint) :: nelem, e(:,:), b(:,:), c(:,:)
+    integer(kint) :: nelem, e(:,:)
     integer(kint), allocatable :: perm(:)
 
     allocate(perm(nnode), source = 0)
@@ -102,6 +102,21 @@ contains
         endif
       enddo
     enddo
+  end subroutine global_to_local_elem
+
+  subroutine global_to_local_conditoin(nnode, nid, nb, b, nc, c)
+    implicit none
+    integer(kint) :: i, in, j, id
+    integer(kint) :: imax, imin, nb, nc
+    integer(kint) :: nnode, nid(:)
+    integer(kint) :: b(:,:), c(:,:)
+    integer(kint), allocatable :: perm(:)
+
+    allocate(perm(nnode), source = 0)
+    do i = 1, nnode
+      perm(i) = i
+    enddo
+    call monolis_qsort_int_with_perm(nid, 1, nnode, perm)
 
     do i = 1, nb
       in = b(1,i)
@@ -122,7 +137,7 @@ contains
         c(1,i) = perm(id)
       endif
     enddo
-  end subroutine global_to_local
+  end subroutine global_to_local_conditoin
 
   subroutine outout_res(mesh, param, var)
     implicit none
