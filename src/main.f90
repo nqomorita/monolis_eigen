@@ -10,8 +10,7 @@ program main
   type(vardef) :: var
   real(kdouble) :: t1, t2, t3
 
-  call monolis_initialize(monolis)
-  call soild_debug_set_myrank(monolis%COM%myrank)
+  call monolis_initialize(monolis, comm_size, myrank)
   t1 = monolis_get_time()
 
   !> FEM part

@@ -2,6 +2,8 @@ module mod_soild_util
   use mod_monolis
 
   integer(kint), parameter :: ndof = 3
+  integer(kint), save :: comm_size = 1
+  integer(kint), save :: myrank = 0
   logical, save :: isNLGeom = .false.
   logical, save :: isdebug = .true.
 

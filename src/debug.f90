@@ -13,25 +13,9 @@ module mod_soild_debug
   public :: soild_plot_time
   public :: soild_plot_solver
 
-  integer(kint), save :: myrank = 0
   integer(kint), parameter :: flog = 30
 
 contains
-
-  subroutine soild_debug_set_myrank(set)
-    implicit none
-    integer(kint) :: set
-    character :: output_dir*100
-    myrank = set
-
-    !output_dir = "log/"
-    !call system('if [ ! -d log ]; then (echo "** create log"; mkdir -p log); fi')
-
-    !if(myrank == 0)then
-    !  open(flog, file = "./log/analysis.log", status = "replace")
-    !  write(flog, "(a)")"* s-version FEM analysis"
-    !endif
-  end subroutine soild_debug_set_myrank
 
   subroutine soild_write_header(header)
     implicit none

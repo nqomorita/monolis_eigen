@@ -28,12 +28,25 @@ contains
 
     call soild_debug_header("soild_input_mesh")
 
-    fname = "node.dat"
-    call monolis_input_mesh_node(fname, mesh%nnode, mesh%node, mesh%nid)
-    mesh%nnode_in = mesh%nnode
+    if(comm_size > 1)then
+      call modify_finename("node", fname)
+      call monolis_input_mesh_node(fname, mesh%nnode_in, mesh%nnode, mesh%node)
 
-    fname = "elem.dat"
-    call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem, mesh%eid)
+      call modify_finename("elem", fname)
+      call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem)
+
+      call modify_finename("node.id", fname)
+      call monolis_input_id(fname, mesh%nid)
+
+      call modify_finename("elem.id", fname)
+      call monolis_input_id(fname, mesh%eid)
+    else
+      call modify_finename("node", fname)
+      call monolis_input_mesh_node(fname, mesh%nnode_in, mesh%nnode, mesh%node, mesh%nid)
+
+      call modify_finename("elem", fname)
+      call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem, mesh%eid)
+    endif
 
     fname = "bc.dat"
     call monolis_input_condition(fname, param%nbound, param%ibound, param%bound)
@@ -50,39 +63,64 @@ contains
     call soild_debug_int("ncload", param%ncload)
   end subroutine soild_input_mesh
 
+  subroutine modify_finename(fname_in, fname)
+    implicit none
+    character(*) :: fname_in
+    character :: fname*100, cnum*5, output_dir*8
+
+    if(comm_size > 1)then
+       output_dir = "parted/"
+       write(cnum,"(i0)") myrank
+      fname = trim(output_dir)//trim(fname_in)//"."//trim(cnum)
+    else
+      fname = trim(fname_in)//".dat"
+    endif
+  end subroutine modify_finename
+
   subroutine global_to_local(nnode, nid, nelem, e, nenode, nb, b, nc, c)
     implicit none
-    integer(kint) :: i, in, j, nenode
+    integer(kint) :: i, in, j, id, nenode
     integer(kint) :: imax, imin, nb, nc
     integer(kint) :: nnode, nid(:)
     integer(kint) :: nelem, e(:,:), b(:,:), c(:,:)
-    integer(kint), allocatable :: temp(:)
+    integer(kint), allocatable :: perm(:)
 
-    imax = maxval(nid)
-    imin = minval(nid)
-    allocate(temp(imin:imax), source = -1)
-
-    in = 1
+    allocate(perm(nnode), source = 0)
     do i = 1, nnode
-      temp(nid(i)) = in
-      in = in + 1
+      perm(i) = i
     enddo
+    call monolis_qsort_int_with_perm(nid, 1, nnode, perm)
 
     do i = 1, nelem
       do j = 1, nenode
         in = e(j,i)
-        e(j,i) = temp(in)
+        call monolis_bsearch_int(nid, 1, nnode, in, id)
+        if(id == -1)then
+          e(j,i) = -1
+        else
+          e(j,i) = perm(id)
+        endif
       enddo
     enddo
 
     do i = 1, nb
       in = b(1,i)
-      b(1,i) = temp(in)
+      call monolis_bsearch_int(nid, 1, nnode, in, id)
+      if(id == -1)then
+        b(1,i) = -1
+      else
+        b(1,i) = perm(id)
+      endif
     enddo
 
     do i = 1, nc
       in = c(1,i)
-      c(1,i) = temp(in)
+      call monolis_bsearch_int(nid, 1, nnode, in, id)
+      if(id == -1)then
+        c(1,i) = -1
+      else
+        c(1,i) = perm(id)
+      endif
     enddo
   end subroutine global_to_local
 
