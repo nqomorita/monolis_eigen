@@ -2,7 +2,7 @@ module mod_soild_update
   use mod_soild_util
   use mod_soild_debug
   use mod_soild_c3d8
-  use mod_soild_c3d8_shape
+
 contains
 
   subroutine delta_u_update(mesh, var)
@@ -60,8 +60,8 @@ contains
     allocate(inode(mesh%nnode), source = 0)
 
     do i = 1, 8
-      call C3D8_integral_point(i, r)
-      call C3D8_shapefunc(r, func(i,:))
+      call monolis_C3D8_integral_point(i, r)
+      call monolis_C3D8_shapefunc(r, func(i,:))
     enddo
     call monolis_get_inverse_matrix(8, func, inv)
 

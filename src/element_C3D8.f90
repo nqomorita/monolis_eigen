@@ -1,6 +1,5 @@
 module mod_soild_c3d8
   use mod_soild_util
-  use mod_soild_c3d8_shape
 contains
 
   subroutine C3D8_stiff(mesh, var, param, icel, elem, stiff)
@@ -28,8 +27,8 @@ contains
     enddo
 
     do i = 1, 8
-      call C3D8_integral_point(i, r)
-      call C3D8_get_global_deriv(x0, r, dndx, det)
+      call monolis_C3D8_integral_point(i, r)
+      call monolis_C3D8_get_global_deriv(x0, r, dndx, det)
       call C3D8_Bmat(u, dndx, B)
       call C3D8_Dmat(param%E, param%mu, D)
       call C3D8_Kmat(var%gauss(i,icel)%stress, dndx, D, B, wg, det, stiff)
@@ -69,26 +68,6 @@ contains
     inv(3,2) = detinv * (-xj(1,1)*xj(3,2) + xj(3,1)*xj(1,2))
     inv(3,3) = detinv * ( xj(1,1)*xj(2,2) - xj(2,1)*xj(1,2))
   end subroutine C3D8_get_inverse_matrix
-
-  subroutine C3D8_get_global_deriv(node, r, dndx, det)
-    implicit none
-    real(kdouble) :: node(3,8), r(3), dndx(8,3), deriv(8,3)
-    real(kdouble) :: xj(3,3), inv(3,3), det
-
-    call C3D8_shapefunc_deriv(r, deriv)
-    xj = matmul(node, deriv)
-    call C3D8_get_inverse_matrix(xj, inv, det)
-    dndx = matmul(deriv, inv)
-  end subroutine C3D8_get_global_deriv
-
-  subroutine C3D8_get_global_pos(node, r, pos)
-    implicit none
-    real(kdouble) :: node(3,8), r(3), pos(3)
-    real(kdouble) :: func(8)
-
-    call C3D8_shapefunc(r, func)
-    pos = matmul(node, func)
-  end subroutine C3D8_get_global_pos
 
   subroutine C3D8_Bmat(u, dndx, B)
     implicit none
@@ -237,8 +216,8 @@ contains
     enddo
 
     do i = 1, 8
-      call C3D8_integral_point(i, r)
-      call C3D8_get_global_deriv(x0, r, dndx, det)
+      call monolis_C3D8_integral_point(i, r)
+      call monolis_C3D8_get_global_deriv(x0, r, dndx, det)
       call C3D8_Bmat(u, dndx, B)
       call C3D8_Dmat(param%E, param%mu, D)
       xj = matmul(u, dndx)
