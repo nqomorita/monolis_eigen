@@ -14,7 +14,6 @@ contains
     type(meshdef) :: mesh
     type(paramdef) :: param
     type(vardef) :: var
-    type(matdef) :: mat
     real(kdouble) :: t1, t2, t3, t4, t5, t6
 
     call soild_write_header("solid_linear_static")
@@ -25,20 +24,20 @@ contains
 
     call soild_debug_time(param%cur_time_step, 0.0d0)
     call init_mesh(mesh, var)
-    call init_matrix(mesh, mat)
+    call init_matrix(mesh)
 
     t2 = monolis_get_time_sync()
     call soild_plot_time("nonzero detection", t2 - t1)
 
-    call get_stiff_matrix(mesh, var, param, mat)
+    call get_stiff_matrix(mesh, var, param)
     call load_condition(var, param)
-    call get_RHS(mesh, var, mat)
-    call bound_condition(mesh, param, mat)
+    call get_RHS(mesh, var)
+    call bound_condition(mesh, param, var)
 
     t3 = monolis_get_time_sync()
     call soild_plot_time("matrix generation", t3 - t2)
 
-    call solver(mesh, var, mat)
+    call solver(mesh, var)
 
     t4 = monolis_get_time_sync()
     call soild_plot_time("solver", t4 - t3)

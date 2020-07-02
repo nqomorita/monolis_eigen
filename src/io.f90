@@ -154,12 +154,12 @@ contains
     nnode = mesh%nnode
     nelem = mesh%nelem
 
-    !open(20, file='u.dat', status='replace')
-    !  write(20,"(i0)")nnode
-    !  do i = 1, nnode
-    !    write(20,"(i0,1p3e22.14)")mesh%nid(i), var%u(3*i-2), var%u(3*i-1), var%u(3*i)
-    !  enddo
-    !close(20)
+    open(20, file='u.dat', status='replace')
+      write(20,"(i0)")nnode
+      do i = 1, nnode
+        write(20,"(i0,1p3e22.14)")mesh%nid(i), var%u(3*i-2), var%u(3*i-1), var%u(3*i)
+      enddo
+    close(20)
 
     output_dir = "visual/"
     call system('if [ ! -d visual ]; then (echo "** create visual"; mkdir -p visual); fi')

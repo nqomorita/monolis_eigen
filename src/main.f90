@@ -10,7 +10,8 @@ program main
   type(vardef) :: var
   real(kdouble) :: t1, t2, t3
 
-  call monolis_initialize(monolis, comm_size, myrank)
+  call monolis_global_initialize()
+  call monolis_initialize(monolis)
   t1 = monolis_get_time()
 
   !> FEM part
@@ -27,4 +28,5 @@ program main
   call soild_plot_time("total ", t3 - t1)
 
   call monolis_finalize(monolis)
+  call monolis_global_finalize()
 end program main

@@ -12,15 +12,6 @@ module mod_soild_util
     real(kdouble) :: stress(6)
   end type gaussdef
 
-  type matdef
-    integer(kint) :: n, ndof
-    integer(kint), pointer :: item(:)
-    integer(kint), pointer :: index(:)
-    real(kdouble), pointer :: A(:)
-    real(kdouble), pointer :: B(:)
-    real(kdouble), pointer :: X(:)
-  end type matdef
-
   type meshdef
     integer(kint) :: nnode
     integer(kint) :: nnode_in
@@ -57,7 +48,8 @@ module mod_soild_util
 
   type vardef
     !> for analysis
-    real(kdouble), pointer :: x(:)  !> solution vector of Ax = b
+    real(kdouble), allocatable :: x(:)  !> solution vector of Ax = b
+    real(kdouble), allocatable :: b(:)  !> solution vector of Ax = b
     real(kdouble), allocatable :: u(:)  !> displacement
     real(kdouble), allocatable :: du(:) !> delta displacement
     real(kdouble), allocatable :: q(:)  !> internal force
@@ -96,6 +88,8 @@ contains
     allocate(var%q (3*mesh%nnode), source = 0.0d0)
     allocate(var%f (3*mesh%nnode), source = 0.0d0)
     allocate(var%f_reaction (3*mesh%nnode), source = 0.0d0)
+    allocate(var%x (3*mesh%nnode), source = 0.0d0)
+    allocate(var%b (3*mesh%nnode), source = 0.0d0)
 
     do i = 1, mesh%nelem
       do j = 1, 8
@@ -105,38 +99,11 @@ contains
     enddo
   end subroutine init_mesh
 
-  subroutine init_matrix(mesh, mat)
-    use iso_c_binding
+  subroutine init_matrix(mesh)
     implicit none
     type(meshdef) :: mesh
-    type(matdef) :: mat
-    integer(kint) :: i, j, nnode, nz, jS, jE
-    integer(c_int), pointer :: index(:), item(:)
 
-    call monolis_get_mesh_to_nodal(mesh%nnode, mesh%nelem, 8, mesh%elem, index, item)
-
-    nnode = mesh%nnode
-    mat%n = nnode
-    mat%ndof = ndof
-    allocate(mat%X(ndof*nnode), source = 0.0d0)
-    allocate(mat%B(ndof*nnode), source = 0.0d0)
-    allocate(mat%index(0:nnode), source = 0)
-    do i = 1, nnode
-      mat%index(i) = index(i+1) + i
-    enddo
-
-    nz = mat%index(nnode)
-    allocate(mat%A(ndof*ndof*nz), source = 0.0d0)
-    allocate(mat%item(nz), source = 0)
-    do i = 1, nnode
-      jS = mat%index(i-1) + 1
-      jE = mat%index(i)
-      mat%item(jS) = i
-      do j = jS+1, jE
-        mat%item(j) = item(j-i) + 1
-      enddo
-      call monolis_qsort_int(mat%item(jS:jE), 1, jE - jS + 1)
-    enddo
+    call monolis_get_nonzero_pattern(monolis, mesh%nnode, 8, ndof, mesh%nelem, mesh%elem)
   end subroutine init_matrix
 
   subroutine finalize_mesh(mesh, var)
