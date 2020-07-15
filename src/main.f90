@@ -12,6 +12,9 @@ program main
 
   call monolis_global_initialize()
   call monolis_initialize(monolis)
+
+  comm_size = monolis_global_commsize()
+  myrank = monolis_global_myrank()
   t1 = monolis_get_time()
 
   !> FEM part
