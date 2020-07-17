@@ -1,17 +1,5 @@
-     1  !> static
-     0  !> isNLGeom (0:off,1:on)
-     5  !> max NR step
-   0.1  !> dt
-     1  !> max time step
-     1  !> increment
+     1  !> isNLGeom (0:off,1:on)
+    3 !> max NR step
 100000  !> young
    0.3  !> paisson
    7.8  !> density
-   0.5  !> gamma for newmark-beta
-  0.25  !> beta for newmark-beta
-   0.0  !> Rm for Rayleigh damping for mass
-   0.0  !> Rk for Rayleigh damping for mass
-     2  !>
-     2  !> href
-     0  !> is_init
-

@@ -67,7 +67,7 @@ contains
     type(vardef) :: var
     integer(kint) :: i, in, k, kS, kE, idof, nb
     integer(kint), allocatable :: indexR(:), itemR(:), permA(:)
-    real(kdouble) :: val
+    real(kdouble) :: val, tmp
 
     call soild_debug_header("bound_condition")
 
@@ -76,7 +76,7 @@ contains
       if(in == -1) cycle
 
       idof = param%ibound(2, nb)
-      val = param%bound(nb)
+      tmp = param%bound(nb)
 
       if(idof < 0 .or. 3 < idof) stop "*** error: 3 < dof"
       if(idof == 0)then
@@ -86,6 +86,7 @@ contains
       endif
 
       do k = kS, kE
+        val = tmp - var%u(3*in-3+k)
         call monolis_set_Dirichlet_bc(monolis, var%B, in, k, val)
       enddo
     enddo
