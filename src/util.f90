@@ -10,6 +10,8 @@ module mod_soild_util
   type gaussdef
     real(kdouble) :: strain(6)
     real(kdouble) :: stress(6)
+    real(kdouble) :: mises(1)
+    real(kdouble) :: equival(1)
   end type gaussdef
 
   type meshdef
@@ -58,12 +60,20 @@ module mod_soild_util
 
     !> for results
     type(gaussdef), allocatable :: gauss(:,:)
+    !> Nodal components
     real(kdouble), allocatable :: nstrain(:,:)
     real(kdouble), allocatable :: nstress(:,:)
     real(kdouble), allocatable :: nmises(:)
+    !> Elemental components
     real(kdouble), allocatable :: estrain(:,:)
     real(kdouble), allocatable :: estress(:,:)
     real(kdouble), allocatable :: emises(:)
+    !> Plastic Strain components and Equivalent plastic Strain
+    real(kdouble), allocatable :: nPPStrain(:,:)
+    real(kdouble), allocatable :: nplstrain(:)
+    !> Plastic Strain components and Equivalent plastic Strain
+    real(kdouble), allocatable :: ePPStrain(:,:)
+    real(kdouble), allocatable :: eplstrain(:)
   end type vardef
 
   type(monolis_structure) :: monolis
@@ -83,6 +93,7 @@ contains
     allocate(var%estrain(6, mesh%nelem), source = 0.0d0)
     allocate(var%estress(6, mesh%nelem), source = 0.0d0)
     allocate(var%emises (mesh%nelem), source = 0.0d0)
+
     allocate(var%u (3*mesh%nnode), source = 0.0d0)
     allocate(var%du(3*mesh%nnode), source = 0.0d0)
     allocate(var%q (3*mesh%nnode), source = 0.0d0)
@@ -91,10 +102,18 @@ contains
     allocate(var%x (3*mesh%nnode), source = 0.0d0)
     allocate(var%b (3*mesh%nnode), source = 0.0d0)
 
+    !> nonlinear material
+    allocate(var%nPPStrain(6,mesh%nnode), source = 0.0d0)
+    allocate(var%nplstrain(mesh%nnode), source = 0.0d0)
+    allocate(var%ePPStrain(6,mesh%nelem), source = 0.0d0)
+    allocate(var%eplstrain(mesh%nelem), source = 0.0d0)
+
     do i = 1, mesh%nelem
       do j = 1, 8
         var%gauss(j,i)%strain = 0.0d0
         var%gauss(j,i)%stress = 0.0d0
+        var%gauss(j,i)%mises  = 0.0d0
+        var%gauss(j,i)%equival = 0.0d0
       enddo
     enddo
   end subroutine init_mesh
@@ -136,5 +155,21 @@ contains
     !if(associated(mesh%v)) deallocate(mesh%v)
     !if(associated(mesh%v_prev)) deallocate(mesh%v_prev)
   end subroutine finalize_mesh
+
+  subroutine get_mises(s, mises)
+    implicit none
+    real(kdouble) :: mises, s(6)
+    real(kdouble) :: s11, s22, s33, s12, s23, s13, ps, smises
+
+    s11 = s(1)
+    s22 = s(2)
+    s33 = s(3)
+    s12 = s(4)
+    s23 = s(5)
+    s13 = s(6)
+    ps = (s11 + s22 + s33) / 3.0d0
+    smises = 0.5d0 * ((s11-ps)**2 + (s22-ps)**2 + (s33-ps)**2) + s12**2 + s23**2 + s13**2
+    mises  = dsqrt( 3.0d0 * smises )
+  end subroutine get_mises
 
 end module mod_soild_util

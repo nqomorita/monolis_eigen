@@ -105,20 +105,4 @@ contains
     enddo
   end subroutine stress_update
 
-  subroutine get_mises(s, mises)
-    implicit none
-    real(kdouble) :: mises, s(6)
-    real(kdouble) :: s11, s22, s33, s12, s23, s13, ps, smises
-
-    s11 = s(1)
-    s22 = s(2)
-    s33 = s(3)
-    s12 = s(4)
-    s23 = s(5)
-    s13 = s(6)
-    ps = (s11 + s22 + s33) / 3.0d0
-    smises = 0.5d0 * ((s11-ps)**2 + (s22-ps)**2 + (s33-ps)**2) + s12**2 + s23**2 + s13**2
-    mises  = dsqrt( 3.0d0 * smises )
-  end subroutine get_mises
-
 end module mod_soild_update

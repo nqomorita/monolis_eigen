@@ -42,8 +42,8 @@ contains
     t4 = monolis_get_time_sync()
     call soild_plot_time("solver", t4 - t3)
 
-    call stress_update(mesh, var, param)
     call delta_u_update(mesh, var)
+    call stress_update(mesh, var, param)
     call u_update(mesh, var)
 
     t5 = monolis_get_time_sync()
@@ -82,7 +82,7 @@ contains
 
     do NRiter = 1, param%max_nrstep
       t2 = monolis_get_time_sync()
-      var%du = 0.0d0; monolis%MAT%A = 0.0d0
+      monolis%MAT%A = 0.0d0
 
       call get_stiff_matrix(mesh, var, param)
       call get_RHS(mesh, var)
@@ -97,13 +97,14 @@ contains
       t4 = monolis_get_time_sync()
       call soild_plot_time("solver", t4 - t3)
 
-      call stress_update(mesh, var, param)
       call delta_u_update(mesh, var)
-      call u_update(mesh, var)
+      call stress_update(mesh, var, param)
 
       t5 = monolis_get_time_sync()
       call soild_plot_time("stress calculation", t5 - t4)
     enddo
+
+    call u_update(mesh, var)
 
     t5 = monolis_get_time_sync()
     call outout_res(mesh, param, var)
