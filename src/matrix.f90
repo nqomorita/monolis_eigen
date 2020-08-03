@@ -21,7 +21,7 @@ contains
         elem(i) = mesh%elem(i, icel)
       enddo
       call C3D8_stiff(mesh, var, param, icel, elem, stiff)
-      call monolis_assemble_sparse_matrix(monolis, 8, elem, stiff)
+      call monolis_add_matrix_to_sparse_matrix(monolis, 8, elem, stiff)
     enddo
   end subroutine get_stiff_matrix
 
