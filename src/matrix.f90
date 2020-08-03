@@ -86,7 +86,7 @@ contains
       endif
 
       do k = kS, kE
-        val = tmp - var%u(3*in-3+k)
+        val = tmp - var%du(3*in-3+k)
         call monolis_set_Dirichlet_bc(monolis, var%B, in, k, val)
       enddo
     enddo
