@@ -25,8 +25,8 @@ program main
   t2 = monolis_get_time()
   call soild_plot_time("input", t2 - t1)
 
-  !call solid_linear_static(mesh, param, var)
-  call solid_nonlinear_static(mesh, param, var)
+  call solid_linear_static(mesh, param, var)
+  !call solid_nonlinear_static(mesh, param, var)
 
   t3 = monolis_get_time()
   call soild_plot_time("total ", t3 - t1)
