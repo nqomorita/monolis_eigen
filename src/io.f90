@@ -22,7 +22,7 @@ contains
     implicit none
     type(meshdef) :: mesh
     type(paramdef) :: param
-    integer(kint) :: i, in
+    integer(kint) :: i, in, ndof
     integer(kint), allocatable :: nid(:), perm(:)
     character :: cnum*5, fname*100
 
@@ -30,7 +30,7 @@ contains
 
     if(comm_size > 1)then
       call modify_finename("node", fname)
-      call monolis_input_mesh_node(fname, mesh%nnode_in, mesh%nnode, mesh%node)
+      call monolis_input_mesh_node(fname, mesh%nnode, mesh%node)
 
       call modify_finename("elem", fname)
       call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem)
@@ -42,7 +42,7 @@ contains
       call monolis_input_id(fname, mesh%eid)
     else
       call modify_finename("node", fname)
-      call monolis_input_mesh_node(fname, mesh%nnode_in, mesh%nnode, mesh%node, mesh%nid)
+      call monolis_input_mesh_node(fname, mesh%nnode, mesh%node, mesh%nid)
 
       call modify_finename("elem", fname)
       call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem, mesh%eid)
@@ -51,10 +51,10 @@ contains
     endif
 
     fname = "bc.dat"
-    call monolis_input_condition(fname, param%nbound, param%ibound, param%bound)
+    call monolis_input_condition(fname, param%nbound, ndof, param%ibound, param%bound)
 
     fname = "load.dat"
-    call monolis_input_condition(fname, param%ncload, param%icload, param%cload)
+    call monolis_input_condition(fname, param%ncload, ndof, param%icload, param%cload)
 
     call global_to_local_conditoin(mesh%nnode, mesh%nid, param%nbound, param%ibound, param%ncload, param%icload)
 
@@ -154,12 +154,12 @@ contains
     nnode = mesh%nnode
     nelem = mesh%nelem
 
-    !open(20, file='u.dat', status='replace')
-    !  write(20,"(i0)")nnode
-    !  do i = 1, nnode
-    !    write(20,"(i0,1p3e22.14)")mesh%nid(i), var%u(3*i-2), var%u(3*i-1), var%u(3*i)
-    !  enddo
-    !close(20)
+    open(20, file='u.dat', status='replace')
+      write(20,"(i0)")nnode
+      do i = 1, nnode
+        write(20,"(i0,1p3e22.14)")mesh%nid(i), var%u(3*i-2), var%u(3*i-1), var%u(3*i)
+      enddo
+    close(20)
 
     output_dir = "visual/"
     call system('if [ ! -d visual ]; then (echo "** create visual"; mkdir -p visual); fi')

@@ -11,9 +11,9 @@ METIS_INC  =
 METIS_LIB  = -L$(METIS_DIR)/lib -lmetis
 
 # mumps library
-#MUMPS_DIR  = $(HOME)
-#MUMPS_INC  = -I $(MUMPS_DIR)/include
-#MUMPS_LIB  = -L$(MUMPS_DIR)/lib -lpord -lmumps_common -ldmumps -lscalapack -lopenblas
+MUMPS_DIR  =  /Users/morita/git/MUMPS
+MUMPS_INC  = -I $(MUMPS_DIR)/include
+MUMPS_LIB  = -L$(MUMPS_DIR)/lib -lpord -lmumps_common -ldmumps  -L/usr/local/lib -lscalapack -L/Users/morita/git/OpenBLAS -lopenblas
 
 # monolis library
 MONOLIS_DIR= ./submodule/monolis

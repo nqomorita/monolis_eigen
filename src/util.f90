@@ -123,7 +123,7 @@ contains
     type(meshdef) :: mesh
 
     call monolis_get_nonzero_pattern(monolis, mesh%nnode, 8, ndof, mesh%nelem, mesh%elem)
-    monolis%MAT%N = mesh%nnode_in
+    !monolis%MAT%N = mesh%nnode
   end subroutine init_matrix
 
   subroutine finalize_mesh(mesh, var)

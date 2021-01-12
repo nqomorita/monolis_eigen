@@ -13,8 +13,9 @@ contains
 
     call soild_debug_header("solver")
 
-    monolis%PRM%maxiter = 100000
-    monolis%PRM%precond = 1
+    monolis%PRM%maxiter = 1000
+    !monolis%PRM%precond = 1
+    monolis%PRM%precond = monolis_prec_MUMPS
     monolis%PRM%tol = 1.0d-8
     monolis%PRM%is_scaling = .false.
     monolis%PRM%is_reordering = .false.

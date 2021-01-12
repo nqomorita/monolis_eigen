@@ -11,7 +11,7 @@ program main
   real(kdouble) :: t1, t2, t3
 
   call monolis_global_initialize()
-  call monolis_initialize(monolis)
+  call monolis_initialize(monolis, "./")
 
   comm_size = monolis_global_commsize()
   myrank = monolis_global_myrank()
