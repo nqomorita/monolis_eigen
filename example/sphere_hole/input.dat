@@ -1,5 +1,0 @@
-     0  !> isNLGeom (0:off,1:on)
-    10  !> max NR step
-100000  !> young
-   0.3  !> paisson
-   7.8  !> density
