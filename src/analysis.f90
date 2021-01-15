@@ -31,7 +31,7 @@ contains
     t3 = monolis_get_time_sync()
     call soild_plot_time("matrix generation", t3 - t2)
 
-!    call solver(mesh, var)
+    call solver(mesh, param, var)
 
     t4 = monolis_get_time_sync()
     call soild_plot_time("solver", t4 - t3)
