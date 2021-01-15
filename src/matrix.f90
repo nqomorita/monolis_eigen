@@ -25,41 +25,6 @@ contains
     enddo
   end subroutine get_stiff_matrix
 
-  subroutine load_condition(var, param)
-    implicit none
-    type(paramdef) :: param
-    type(vardef) :: var
-    integer(kint) :: i, in, dof
-    real(kdouble) :: val
-
-    call soild_debug_header("load_condition")
-    var%f = 0.0d0
-    do i = 1, param%ncload
-      in  = param%icload(1, i)
-      if(in == -1) cycle
-
-      dof = param%icload(2, i)
-      val = param%cload(i)
-      if(ndof < dof) stop "*** error: 3 < dof"
-      var%f(ndof*(in-1) + dof) = val
-    enddo
-  end subroutine load_condition
-
-  subroutine get_RHS(mesh, var)
-    implicit none
-    type(meshdef) :: mesh
-    type(vardef) :: var
-    integer(kint) :: i
-
-    call soild_debug_header("get_RHS")
-
-    do i = 1, mesh%nnode
-      var%B(3*i-2) = var%f(3*i-2) - var%q(3*i-2)
-      var%B(3*i-1) = var%f(3*i-1) - var%q(3*i-1)
-      var%B(3*i  ) = var%f(3*i  ) - var%q(3*i  )
-    enddo
-  end subroutine get_RHS
-
   subroutine bound_condition(mesh, param, var)
     implicit none
     type(meshdef) :: mesh
@@ -79,6 +44,7 @@ contains
       tmp = param%bound(nb)
 
       if(idof < 0 .or. 3 < idof) stop "*** error: 3 < dof"
+
       if(idof == 0)then
         kS = 1; kE = 3
       else
@@ -86,8 +52,7 @@ contains
       endif
 
       do k = kS, kE
-        val = tmp - var%u(3*in-3+k) - var%du(3*in-3+k)
-        call monolis_set_Dirichlet_bc(monolis, var%B, in, k, val)
+        call monolis_set_Dirichlet_bc(monolis, var%B, in, k, 0.0d0)
       enddo
     enddo
   end subroutine bound_condition

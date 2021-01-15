@@ -9,9 +9,6 @@ contains
     integer(kint) :: i
 
     open(10, file="input.dat", status='old')
-      read(10,*) i
-      if(i == 1) isNLGeom = .true.
-      read(10,*) param%max_nrstep
       read(10,*) param%E
       read(10,*) param%mu
       read(10,*) param%rho
@@ -53,15 +50,11 @@ contains
     fname = "bc.dat"
     call monolis_input_condition(fname, param%nbound, ndof, param%ibound, param%bound)
 
-    fname = "load.dat"
-    call monolis_input_condition(fname, param%ncload, ndof, param%icload, param%cload)
-
-    call global_to_local_conditoin(mesh%nnode, mesh%nid, param%nbound, param%ibound, param%ncload, param%icload)
+    call global_to_local_conditoin(mesh%nnode, mesh%nid, param%nbound, param%ibound)
 
     call soild_debug_int("nnode", mesh%nnode)
     call soild_debug_int("nnode", mesh%nelem)
     call soild_debug_int("nbound", param%nbound)
-    call soild_debug_int("ncload", param%ncload)
   end subroutine soild_input_mesh
 
   subroutine modify_finename(fname_in, fname)
@@ -106,12 +99,12 @@ contains
     enddo
   end subroutine global_to_local_elem
 
-  subroutine global_to_local_conditoin(nnode, nid, nb, b, nc, c)
+  subroutine global_to_local_conditoin(nnode, nid, nb, b)
     implicit none
     integer(kint) :: i, in, j, id
-    integer(kint) :: imax, imin, nb, nc
+    integer(kint) :: imax, imin, nb
     integer(kint) :: nnode, nid(:)
-    integer(kint) :: b(:,:), c(:,:)
+    integer(kint) :: b(:,:)
     integer(kint), allocatable :: perm(:)
 
     allocate(perm(nnode), source = 0)
@@ -127,16 +120,6 @@ contains
         b(1,i) = -1
       else
         b(1,i) = perm(id)
-      endif
-    enddo
-
-    do i = 1, nc
-      in = c(1,i)
-      call monolis_bsearch_int(nid, 1, nnode, in, id)
-      if(id == -1)then
-        c(1,i) = -1
-      else
-        c(1,i) = perm(id)
       endif
     enddo
   end subroutine global_to_local_conditoin
@@ -183,15 +166,8 @@ contains
       write(20,"(a)")'</PCells>'
       write(20,"(a)")'<PPointData>'
       write(20,"(a)")'<PDataArray type="Float32" Name="disp" NumberOfComponents="3" format="appended"/>'
-      write(20,"(a)")'<PDataArray type="Float32" Name="nstrain" NumberOfComponents="6" format="appended"/>'
-      write(20,"(a)")'<PDataArray type="Float32" Name="nstress" NumberOfComponents="6" format="appended"/>'
-      write(20,"(a)")'<PDataArray type="Float32" Name="nmises" NumberOfComponents="1" format="appended"/>'
-      write(20,"(a)")'<PDataArray type="Float32" Name="nreaction" NumberOfComponents="3" format="appended"/>'
       write(20,"(a)")'</PPointData>'
       write(20,"(a)")'<PCellData>'
-      write(20,"(a)")'<PDataArray type="Float32" Name="estrain" NumberOfComponents="6" format="appended"/>'
-      write(20,"(a)")'<PDataArray type="Float32" Name="estress" NumberOfComponents="6" format="appended"/>'
-      write(20,"(a)")'<PDataArray type="Float32" Name="emises" NumberOfComponents="1" format="appended"/>'
       write(20,"(a)")'</PCellData>'
       do i = 0, monolis%COM%commsize - 1
         write(cnum,"(i0)") i
@@ -247,48 +223,9 @@ contains
         write(20,"(1p3e12.4)")var%u(3*i-2), var%u(3*i-1), var%u(3*i)
       enddo
       write(20,"(a)")'</DataArray>'
-      write(20,"(a)")'<DataArray type="Float32" Name="nstrain" NumberOfComponents="6" format="ascii">'
-      do i = 1, nnode
-        write(20,"(1p6e12.4)")var%nstrain(1,i), var%nstrain(2,i), var%nstrain(3,i), &
-                            & var%nstrain(4,i), var%nstrain(5,i), var%nstrain(6,i)
-      enddo
-      write(20,"(a)")'</DataArray>'
-      write(20,"(a)")'<DataArray type="Float32" Name="nstress" NumberOfComponents="6" format="ascii">'
-      do i = 1, nnode
-        write(20,"(1p6e12.4)")var%nstress(1,i), var%nstress(2,i), var%nstress(3,i), &
-                            & var%nstress(4,i), var%nstress(5,i), var%nstress(6,i)
-      enddo
-      write(20,"(a)")'</DataArray>'
-      write(20,"(a)")'<DataArray type="Float32" Name="nmises" NumberOfComponents="1" format="ascii">'
-      do i = 1, nnode
-        write(20,"(1p6e12.4)")var%nmises(i)
-      enddo
-      write(20,"(a)")'</DataArray>'
-      write(20,"(a)")'<DataArray type="Float32" Name="nreaction" NumberOfComponents="3" format="ascii">'
-      do i = 1, nnode
-        write(20,"(1p6e12.4)")var%f_reaction(3*i-2), var%f_reaction(3*i-1), var%f_reaction(3*i)
-      enddo
-      write(20,"(a)")'</DataArray>'
       write(20,"(a)")'</PointData>'
 
       write(20,"(a)")'<CellData>'
-      write(20,"(a)")'<DataArray type="Float32" Name="estrain" NumberOfComponents="6" format="ascii">'
-      do i = 1, nelem
-        write(20,"(1p6e12.4)")var%estrain(1,i), var%estrain(2,i), var%estrain(3,i), &
-                            & var%estrain(4,i), var%estrain(5,i), var%estrain(6,i)
-      enddo
-      write(20,"(a)")'</DataArray>'
-      write(20,"(a)")'<DataArray type="Float32" Name="estress" NumberOfComponents="6" format="ascii">'
-      do i = 1, nelem
-        write(20,"(1p6e12.4)")var%estress(1,i), var%estress(2,i), var%estress(3,i), &
-                            & var%estress(4,i), var%estress(5,i), var%estress(6,i)
-      enddo
-      write(20,"(a)")'</DataArray>'
-      write(20,"(a)")'<DataArray type="Float32" Name="emises" NumberOfComponents="1" format="ascii">'
-      do i = 1, nelem
-        write(20,"(1p6e12.4)")var%emises(i)
-      enddo
-      write(20,"(a)")'</DataArray>'
       write(20,"(a)")'</CellData>'
 
       write(20,"(a)")'</Piece>'
@@ -309,31 +246,8 @@ contains
     thr = 1.0d-30
 
     do i = 1, nnode
-      if(var%nmises(i) < thr) var%nmises(i) = 0.0d0
-    enddo
-
-    do i = 1, nnode
       do j = 1, 3
         if(dabs(var%u    (3*i-3+j)) < thr) var%u    (3*i-3+j) = 0.0d0
-        if(dabs(var%f_reaction(3*i-3+j)) < thr) var%f_reaction(3*i-3+j) = 0.0d0
-      enddo
-    enddo
-
-    do i = 1, nnode
-      do j = 1, 6
-        if(dabs(var%nstrain(j,i)) < thr) var%nstrain(j,i) = 0.0d0
-        if(dabs(var%nstress(j,i)) < thr) var%nstress(j,i) = 0.0d0
-      enddo
-    enddo
-
-    do i = 1, nelem
-      if(dabs(var%emises(i)) < thr) var%emises(i) = 0.0d0
-    enddo
-
-    do i = 1, nelem
-      do j = 1, 6
-        if(dabs(var%estrain(j,i)) < thr) var%estrain(j,i) = 0.0d0
-        if(dabs(var%estress(j,i)) < thr) var%estress(j,i) = 0.0d0
       enddo
     enddo
   end subroutine convert_to_real
