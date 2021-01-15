@@ -19,14 +19,14 @@ contains
 
     t1 = monolis_get_time_sync()
 
-    call init_mesh(mesh, var)
+    call init_mesh(mesh, param, var)
     call init_matrix(mesh)
 
     t2 = monolis_get_time_sync()
     call soild_plot_time("nonzero detection", t2 - t1)
 
-!    call get_stiff_matrix(mesh, var, param)
-!    call bound_condition(mesh, param, var)
+    call get_stiff_matrix(mesh, var, param)
+    call bound_condition(mesh, param, var)
 
     t3 = monolis_get_time_sync()
     call soild_plot_time("matrix generation", t3 - t2)
@@ -36,7 +36,7 @@ contains
     t4 = monolis_get_time_sync()
     call soild_plot_time("solver", t4 - t3)
 
-!    call outout_res(mesh, param, var)
+    call outout_res(mesh, param, var)
     call finalize_mesh(mesh, var)
 
     t5 = monolis_get_time_sync()

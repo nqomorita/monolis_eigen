@@ -17,8 +17,8 @@ module mod_soild_util
   end type meshdef
 
   type paramdef
-    !> for time step loop
-    integer(kint) :: cur_time_step
+    integer(kint) :: n_get_eigen
+    real(kdouble) :: thresh
 
     !> for boundary condition
     integer(kint) :: nbound
@@ -31,23 +31,20 @@ module mod_soild_util
 
   type vardef
     !> for analysis
-    real(kdouble), allocatable :: x(:)  !> solution vector of Ax = b
-    real(kdouble), allocatable :: b(:)  !> solution vector of Ax = b
-    real(kdouble), allocatable :: u(:)
+    real(kdouble), allocatable :: u(:,:)
   end type vardef
 
   type(monolis_structure) :: monolis
 
 contains
 
-  subroutine init_mesh(mesh, var)
+  subroutine init_mesh(mesh, param, var)
     implicit none
     type(meshdef) :: mesh
+    type(paramdef) :: param
     type(vardef) :: var
 
-    allocate(var%u (3*mesh%nnode), source = 0.0d0)
-    allocate(var%x (3*mesh%nnode), source = 0.0d0)
-    allocate(var%b (3*mesh%nnode), source = 0.0d0)
+    allocate(var%u (3*mesh%nnode, param%n_get_eigen), source = 0.0d0)
   end subroutine init_mesh
 
   subroutine init_matrix(mesh)

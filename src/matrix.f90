@@ -31,10 +31,13 @@ contains
     type(paramdef) :: param
     type(vardef) :: var
     integer(kint) :: i, in, k, kS, kE, idof, nb
-    integer(kint), allocatable :: indexR(:), itemR(:), permA(:)
     real(kdouble) :: val, tmp
+    integer(kint), allocatable :: indexR(:), itemR(:), permA(:)
+    real(kdouble), allocatable :: b(:)  !> solution vector of Ax = b
 
     call soild_debug_header("bound_condition")
+
+    allocate(b (3*mesh%nnode), source = 0.0d0)
 
     do nb = 1, param%nbound
       in  = param%ibound(1, nb)
@@ -52,8 +55,10 @@ contains
       endif
 
       do k = kS, kE
-        call monolis_set_Dirichlet_bc(monolis, var%B, in, k, 0.0d0)
+        call monolis_set_Dirichlet_bc(monolis, b, in, k, 0.0d0)
       enddo
     enddo
+
+    deallocate(b)
   end subroutine bound_condition
 end module mod_soild_matrix

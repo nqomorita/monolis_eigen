@@ -21,24 +21,21 @@ contains
       x0(1,i) = mesh%node(1,in)
       x0(2,i) = mesh%node(2,in)
       x0(3,i) = mesh%node(3,in)
-      u(1,i)  = var%u(3*in-2)
-      u(2,i)  = var%u(3*in-1)
-      u(3,i)  = var%u(3*in  )
     enddo
 
     do i = 1, 8
       call monolis_C3D8_integral_point(i, r)
       call monolis_C3D8_get_global_deriv(x0, r, dndx, det)
-      call C3D8_Bmat(u, dndx, B)
+      call C3D8_Bmat(dndx, B)
       call C3D8_Dmat(param%E, param%mu, D)
       call C3D8_Kmat(D, B, wg, det, stiff)
     enddo
   end subroutine C3D8_stiff
 
-  subroutine C3D8_Bmat(u, dndx, B)
+  subroutine C3D8_Bmat(dndx, B)
     implicit none
     integer(kint) :: i, i1, i2, i3
-    real(kdouble) :: u(3,8), B(6,24), dndx(8,3), dudx(3,3)
+    real(kdouble) :: B(6,24), dndx(8,3), dudx(3,3)
 
     B = 0.0d0
     do i = 1, 8
