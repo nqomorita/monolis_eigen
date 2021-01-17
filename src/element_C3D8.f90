@@ -32,6 +32,124 @@ contains
     enddo
   end subroutine C3D8_stiff
 
+  subroutine C3D8_mass(mesh, var, param, icel, elem, mass)
+    implicit none
+    type(meshdef) :: mesh
+    type(vardef) :: var
+    type(paramdef) :: param
+    integer(kint) :: i, in, icel
+    integer(kint) :: elem(8)
+    real(kdouble) :: x0(3,8), mass(24,24)
+    real(kdouble) :: r(3), func(8), wg, det
+    real(kdouble) :: dndx(8,3)
+
+    wg = 1.0d0
+    mass = 0.0d0
+
+    do i = 1, 8
+      in = elem(i)
+      x0(1,i) = mesh%node(1,in)
+      x0(2,i) = mesh%node(2,in)
+      x0(3,i) = mesh%node(3,in)
+    enddo
+
+    do i = 1, 8
+      call monolis_C3D8_integral_point(i, r)
+      call monolis_C3D8_shapefunc(r, func)
+      call monolis_C3D8_get_global_deriv(x0, r, dndx, det)
+      call C3D8_Mmat(param, func, wg, det, mass)
+    enddo
+
+    call get_lumped_mass(8, 3, mass)
+  end subroutine C3D8_mass
+
+  subroutine get_lumped_mass(nn, ndof, mass)
+    implicit none
+    integer(kint) :: i, j, nn, ndof
+    real(kdouble) :: lumped(nn*ndof), mass(:,:)
+    real(kdouble) :: diag_mass, total_mass
+
+    total_mass = 0.0d0
+    do i = 1, nn*ndof, ndof
+      do j = 1, nn*ndof, ndof
+        total_mass = total_mass + mass(j,i)
+      enddo
+    enddo
+
+    diag_mass = 0.0d0
+    do i = 1, nn*ndof, ndof
+      diag_mass = diag_mass + mass(i,i)
+    enddo
+
+    lumped = 0.0d0
+    diag_mass = 1.0d0/diag_mass
+    do i = 1, nn*ndof
+      lumped(i) = lumped(i) + mass(i,i)*total_mass*diag_mass
+    enddo
+
+    mass = 0.0d0
+    do i = 1, nn*ndof
+      mass(i,i) = lumped(i)
+    enddo
+  end subroutine get_lumped_mass
+
+  subroutine C3D8_Mmat(param, func, wg, det, mass)
+    implicit none
+    type(paramdef) :: param
+    integer(kint) :: i, j, k
+    real(kdouble) :: mass(24,24), D(3,3), DN(3,24), wg, det, rho
+    real(kdouble) :: func(8), N(3,24)
+
+    rho = param%rho
+
+    N = 0.0d0
+    do j = 1, 8
+      N(1,3*j-2) = func(j)
+      N(2,3*j-1) = func(j)
+      N(3,3*j  ) = func(j)
+    enddo
+
+    D = 0.0d0
+    D(1,1) = rho
+    D(2,2) = rho
+    D(3,3) = rho
+
+    DN = matmul(D, N)
+
+    do i = 1, 24
+      do j = 1, 24
+        do k = 1, 3
+          mass(j,i) = mass(j,i) + N(k,j)*DN(k,i)*wg*det
+        enddo
+      enddo
+    enddo
+  end subroutine C3D8_Mmat
+
+!  subroutine C3D8_volume(node, volume)
+!    implicit none
+!    integer(kint) :: i, j
+!    real(kdouble) :: node(3,8), mass(8,8), volume
+!    real(kdouble) :: r(3), func(8), wg, det
+!    real(kdouble) :: dndx(8,3)
+!
+!    wg = 1.0d0
+!    mass = 0.0d0
+!    volume = 0.0d0
+!
+!    do i = 1, 8
+!      call monolis_C3D8_integral_point(i, r)
+!      call monolis_C3D8_shapefunc(r, func)
+!      call monolis_C3D8_get_global_deriv(node, r, dndx, det)
+!      call C3D8_Vmat(func, wg, det, mass)
+!    enddo
+!
+!    do i = 1, 8
+!      do j = 1, 8
+!        volume = volume + mass(j,i)
+!      enddo
+!    enddo
+!  end subroutine C3D8_volume
+
   subroutine C3D8_Bmat(dndx, B)
     implicit none
     integer(kint) :: i, i1, i2, i3

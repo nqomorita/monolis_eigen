@@ -144,6 +144,12 @@ contains
 
     call convert_to_real(mesh, param, var)
 
+    open(20, file=trim(output_dir)//'result.eigen_value.dat', status='replace')
+    do id = 1, param%n_get_eigen
+      write(20,"(1pe12.5)") var%val(id)
+    enddo
+    close(20)
+
     do id = 1, param%n_get_eigen
       write(cstep,"(i5.5)")id
 
@@ -216,7 +222,7 @@ contains
         write(20,"(a)")'<PointData>'
         write(20,"(a)")'<DataArray type="Float32" Name="disp" NumberOfComponents="3" format="ascii">'
         do i = 1, nnode
-          write(20,"(1p3e12.4)")var%u(3*i-2,id), var%u(3*i-1,id), var%u(3*i,id)
+          write(20,"(1p3e12.4)")var%vec(3*i-2,id), var%vec(3*i-1,id), var%vec(3*i,id)
         enddo
         write(20,"(a)")'</DataArray>'
         write(20,"(a)")'</PointData>'
@@ -245,7 +251,7 @@ contains
 
     do i = 1, param%n_get_eigen
       do j = 1, 3*nnode
-        if(dabs(var%u(j,i)) < thr) var%u(j,i) = 0.0d0
+        if(dabs(var%vec(j,i)) < thr) var%vec(j,i) = 0.0d0
       enddo
     enddo
   end subroutine convert_to_real

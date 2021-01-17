@@ -25,6 +25,33 @@ contains
     enddo
   end subroutine get_stiff_matrix
 
+  subroutine get_mass_matrix(mesh, var, param)
+    implicit none
+    type(meshdef) :: mesh
+    type(paramdef) :: param
+    type(vardef) :: var
+    integer(kint) :: i, icel, in
+    integer(kint) :: elem(8)
+    real(kdouble) :: mass(24,24)
+
+    call soild_debug_header("get_mass_matrix")
+
+    var%mass = 0.0d0
+
+    do icel = 1,mesh%nelem
+      do i = 1, 8
+        elem(i) = mesh%elem(i, icel)
+      enddo
+      call C3D8_mass(mesh, var, param, icel, elem, mass)
+      do i = 1, 8
+        in = elem(i)
+        var%mass(3*in-2) = var%mass(3*in-2) + mass(3*i-2,3*i-2)
+        var%mass(3*in-1) = var%mass(3*in-1) + mass(3*i-1,3*i-1)
+        var%mass(3*in  ) = var%mass(3*in  ) + mass(3*i  ,3*i  )
+      enddo
+    enddo
+  end subroutine get_mass_matrix
+
   subroutine bound_condition(mesh, param, var)
     implicit none
     type(meshdef) :: mesh
@@ -37,14 +64,13 @@ contains
 
     call soild_debug_header("bound_condition")
 
-    allocate(b (3*mesh%nnode), source = 0.0d0)
+    allocate(b(3*mesh%nnode), source = 0.0d0)
 
     do nb = 1, param%nbound
       in  = param%ibound(1, nb)
       if(in == -1) cycle
 
       idof = param%ibound(2, nb)
-      tmp = param%bound(nb)
 
       if(idof < 0 .or. 3 < idof) stop "*** error: 3 < dof"
 
