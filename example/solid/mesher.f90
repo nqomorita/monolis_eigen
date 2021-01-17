@@ -48,7 +48,7 @@ program main
   write(*,*)"NNODE", NNODE
   write(*,*)"NELEM", NELEM
 
-  TX = 1.0d0/dble(EX)
+  TX = 10.0d0/dble(EX)
   TY = 1.0d0/dble(EY)
   TZ = 1.0d0/dble(EZ)
 

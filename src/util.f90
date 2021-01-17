@@ -34,6 +34,7 @@ module mod_soild_util
     real(kdouble), allocatable :: val(:)
     real(kdouble), allocatable :: vec(:,:)
     real(kdouble), allocatable :: mass(:)
+    logical, allocatable :: is_bc(:)
   end type vardef
 
   type(monolis_structure) :: monolis
@@ -49,6 +50,7 @@ contains
     allocate(var%val(param%n_get_eigen), source = 0.0d0)
     allocate(var%vec(3*mesh%nnode, param%n_get_eigen), source = 0.0d0)
     allocate(var%mass(3*mesh%nnode), source = 0.0d0)
+    allocate(var%is_bc(3*mesh%nnode), source = .false.)
   end subroutine init_mesh
 
   subroutine init_matrix(mesh)
@@ -67,9 +69,9 @@ contains
     integer(kint) :: N, NP, NDOF, NDOF2
     integer(kint) :: inod
     integer(kint) :: i, j, jS, jE, in, k, l
-    real(kdouble) :: tcomm
     real(kdouble) :: mass(:)
-    real(kdouble), pointer :: A(:), X(:), B(:), diag(:)
+    real(kdouble), pointer :: A(:)
+    real(kdouble), allocatable :: diag(:)
     integer(kint), pointer :: index(:), item(:)
     real(kdouble) :: t1, t2
 

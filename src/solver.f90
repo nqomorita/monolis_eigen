@@ -13,14 +13,14 @@ contains
 
     call soild_debug_header("solver")
 
-    monolis%PRM%maxiter = 10
-    monolis%PRM%precond = monolis_prec_SOR
+    monolis%PRM%maxiter = 10000
+    monolis%PRM%precond = monolis_prec_MUMPS
     monolis%PRM%tol = 1.0d-8
     monolis%PRM%is_scaling = .false.
     monolis%PRM%is_reordering = .false.
     monolis%PRM%is_init_x = .true.
     monolis%PRM%is_debug = .false.
-    monolis%PRM%show_summary = .false.
+    monolis%PRM%show_summary = .true.
     monolis%PRM%show_time = .false.
     monolis%PRM%show_iterlog = .false.
 
@@ -28,6 +28,6 @@ contains
     !  & param%n_get_eigen, param%thresh, 100, var%u)
 
     call monolis_eigen_inverted_standard_lanczos(monolis, &
-      & param%n_get_eigen, param%thresh, 200, var%val, var%vec)
+      & param%n_get_eigen, param%thresh, 200, var%val, var%vec, var%is_bc)
   end subroutine solver
 end module mod_soild_solver

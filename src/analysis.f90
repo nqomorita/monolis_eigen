@@ -26,8 +26,8 @@ contains
     call soild_plot_time("nonzero detection", t2 - t1)
 
     call get_stiff_matrix(mesh, var, param)
-    !call get_mass_matrix(mesh, var, param)
-    !call monolis_mass_scaling_fw(monolis%PRM, monolis%COM, monolis%MAT, var%mass)
+    call get_mass_matrix(mesh, var, param)
+    call monolis_mass_scaling_fw(monolis%PRM, monolis%COM, monolis%MAT, var%mass)
 
     call bound_condition(mesh, param, var)
 

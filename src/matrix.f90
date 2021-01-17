@@ -82,6 +82,7 @@ contains
 
       do k = kS, kE
         call monolis_set_Dirichlet_bc(monolis, b, in, k, 0.0d0)
+        var%is_bc(3*(in-1)+k) = .true.
       enddo
     enddo
 
