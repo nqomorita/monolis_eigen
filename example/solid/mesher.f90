@@ -119,8 +119,8 @@ program main
       enddo
     enddo
 
-    write(30,"(i0,x,i0)")ip1, 3
-!    write(40,"(2i0)")ip1, 1
+    write(30,"(i0,x,i0)")3*ip1, 3
+!    write(40,"(2i0)")3*ip1, 1
     in = 1
     do k = 1, NZ
       do j = 1, NY

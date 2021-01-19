@@ -58,7 +58,6 @@ contains
     type(meshdef) :: mesh
 
     call monolis_get_nonzero_pattern(monolis, mesh%nnode, 8, ndof, mesh%nelem, mesh%elem)
-    !monolis%MAT%N = mesh%nnode
   end subroutine init_matrix
 
   subroutine monolis_mass_scaling_fw(monoPRM, monoCOM, monoMAT, mass)
@@ -105,6 +104,28 @@ contains
       enddo
     enddo
   end subroutine monolis_mass_scaling_fw
+
+  subroutine monolis_mass_scaling_bk(mesh, param, var, mass)
+    implicit none
+    type(meshdef) :: mesh
+    type(paramdef) :: param
+    type(vardef) :: var
+    integer(kint) :: i, j
+    real(kdouble) :: mass(:)
+    real(kdouble), allocatable :: diag(:)
+
+    allocate(diag(mesh%nnode*ndof), source = 0.0d0)
+
+    do i = 1, mesh%nnode*ndof
+      diag(i) = 1.0d0 / dsqrt(dabs(mass(i)))
+    enddo
+
+    do i = 1, param%n_get_eigen
+      do j = 1, mesh%nnode*ndof
+        var%vec(j,i) = var%vec(j,i) * diag(j)
+      enddo
+    enddo
+  end subroutine monolis_mass_scaling_bk
 
   subroutine finalize_mesh(mesh, var)
     implicit none

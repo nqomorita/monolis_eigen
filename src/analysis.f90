@@ -39,6 +39,7 @@ contains
     t4 = monolis_get_time_sync()
     call soild_plot_time("solver", t4 - t3)
 
+    call monolis_mass_scaling_bk(mesh, param, var, var%mass)
     call outout_res(mesh, param, var)
     call finalize_mesh(mesh, var)
 

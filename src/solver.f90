@@ -15,12 +15,13 @@ contains
 
     monolis%PRM%maxiter = 10000
     monolis%PRM%precond = monolis_prec_MUMPS
-    monolis%PRM%tol = 1.0d-8
+    !monolis%PRM%precond = monolis_prec_SOR
+    monolis%PRM%tol = 1.0d-10
     monolis%PRM%is_scaling = .false.
     monolis%PRM%is_reordering = .false.
     monolis%PRM%is_init_x = .true.
     monolis%PRM%is_debug = .false.
-    monolis%PRM%show_summary = .true.
+    monolis%PRM%show_summary = .false.
     monolis%PRM%show_time = .false.
     monolis%PRM%show_iterlog = .false.
 
