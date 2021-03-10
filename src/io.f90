@@ -145,8 +145,10 @@ contains
     call convert_to_real(mesh, param, var)
 
     open(20, file=trim(output_dir)//'result.eigen_value.dat', status='replace')
+    write(*,"(a)")" Mode No    Freq. [Hz]"
     do id = 1, param%n_get_eigen
       write(20,"(1pe12.5)") var%val(id)
+      write(*,"(i8,1pe14.5)") id, var%val(id)
     enddo
     close(20)
 
