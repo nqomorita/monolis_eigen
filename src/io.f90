@@ -132,6 +132,8 @@ contains
     type(paramdef) :: param
     type(vardef) :: var
     integer(kint) :: i, id, nnode, nelem
+    real(kdouble) :: angle, freq
+    real(kdouble), parameter :: PI = 3.14159265359d0
     character :: cstep*5, cnum*5, output_dir*100
 
     call soild_debug_header("outout_res")
@@ -145,10 +147,13 @@ contains
     call convert_to_real(mesh, param, var)
 
     open(20, file=trim(output_dir)//'result.eigen_value.dat', status='replace')
+    write(20,"(a)")" Mode No    Freq. [Hz]"
     write(*,"(a)")" Mode No    Freq. [Hz]"
     do id = 1, param%n_get_eigen
-      write(20,"(1pe12.5)") var%val(id)
-      write(*,"(i8,1pe14.5)") id, var%val(id)
+      angle = dsqrt(var%val(id))
+      freq  = angle*0.5d0/PI
+      write(20,"(i8,1pe14.5)") id, freq
+      write(*,"(i8,1pe14.5)") id, freq
     enddo
     close(20)
 

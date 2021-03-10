@@ -29,6 +29,6 @@ contains
     !  & param%n_get_eigen, param%thresh, 100, var%u)
 
     call monolis_eigen_inverted_standard_lanczos(monolis, &
-      & param%n_get_eigen, param%thresh, 300, var%val, var%vec, var%is_bc)
+      & param%n_get_eigen, param%thresh, 200, var%val, var%vec, var%is_bc)
   end subroutine solver
 end module mod_soild_solver
