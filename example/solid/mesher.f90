@@ -92,7 +92,7 @@ program main
     !node
     write(30,"(i0)")NNODE
     do i = 1, NNODE
-      write(30,"(i8,a,1pe12.5,a,1pe12.5,a,1pe12.5)")i,",",coord(1,i),",",coord(2,i),",",coord(3,i)
+      write(30,"(1pe12.5,a,1pe12.5,a,1pe12.5)")coord(1,i),",",coord(2,i),",",coord(3,i)
     enddo
   close(30)
 
@@ -100,7 +100,7 @@ program main
     !element
     write(30,"(i0, i2)")NELEM, 8
     do i = 1, NELEM
-      write(30,"(i8,a,i8,a,i8,a,i8,a,i8,a,i8,a,i8,a,i8,a,i8)")i,",",elemNode(1,i),",",elemNode(2,i),",", &
+      write(30,"(i8,a,i8,a,i8,a,i8,a,i8,a,i8,a,i8,a,i8)")elemNode(1,i),",",elemNode(2,i),",", &
     & elemNode(3,i),",",elemNode(4,i),",",elemNode(5,i),",",elemNode(6,i),",",elemNode(7,i),",",elemNode(8,i)
     enddo
   close(30)
