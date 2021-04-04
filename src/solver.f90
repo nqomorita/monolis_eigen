@@ -13,17 +13,16 @@ contains
 
     call soild_debug_header("solver")
 
-    monolis%PRM%maxiter = 10000
-    monolis%PRM%precond = monolis_prec_MUMPS
-    !monolis%PRM%precond = monolis_prec_SOR
-    monolis%PRM%tol = 1.0d-10
-    monolis%PRM%is_scaling = .false.
-    monolis%PRM%is_reordering = .false.
-    monolis%PRM%is_init_x = .true.
-    monolis%PRM%is_debug = .false.
-    monolis%PRM%show_summary = .false.
-    monolis%PRM%show_time = .false.
-    monolis%PRM%show_iterlog = .false.
+    call monolis_param_set_method(monolis, monolis_iter_CG)
+    call monolis_param_set_precond(monolis, monolis_prec_MUMPS)
+    call monolis_param_set_maxiter(monolis, 100)
+    call monolis_param_set_tol(monolis, 1.0d-8)
+    call monolis_param_set_is_scaling(monolis, .false.)
+    call monolis_param_set_is_reordering(monolis, .false.)
+    call monolis_param_set_is_debug(monolis, .false.)
+    call monolis_param_set_show_time(monolis, .false.)
+    call monolis_param_set_show_iterlog(monolis, .false.)
+    call monolis_param_set_show_summary(monolis, .false.)
 
     !call monolis_eigen_inverted_lobpcg(monolis, &
     !  & param%n_get_eigen, param%thresh, 100, var%u)

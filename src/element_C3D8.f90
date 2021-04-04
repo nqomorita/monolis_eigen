@@ -1,66 +1,49 @@
 module mod_soild_c3d8
   use mod_soild_util
+
 contains
 
-  subroutine C3D8_stiff(mesh, var, param, icel, elem, stiff)
+  subroutine C3D8_stiff(mesh, var, param, icel, x, stiff)
     implicit none
     type(meshdef) :: mesh
     type(vardef) :: var
     type(paramdef) :: param
     integer(kint) :: i, in, icel
     integer(kint) :: elem(8)
-    real(kdouble) :: x0(3,8), u(3,8), stiff(24,24)
+    real(kdouble) :: x(3,8), stiff(24,24)
     real(kdouble) :: r(3), wg, det
     real(kdouble) :: B(6,24), D(6,6), dndx(8,3)
 
-    wg     = 1.0d0
-    stiff  = 0.0d0
-
-    do i = 1, 8
-      in = elem(i)
-      x0(1,i) = mesh%node(1,in)
-      x0(2,i) = mesh%node(2,in)
-      x0(3,i) = mesh%node(3,in)
-    enddo
-
+    wg    = 1.0d0
+    stiff = 0.0d0
     do i = 1, 8
       call monolis_C3D8_integral_point(i, r)
-      call monolis_C3D8_get_global_deriv(x0, r, dndx, det)
+      call monolis_C3D8_get_global_deriv(x, r, dndx, det)
       call C3D8_Bmat(dndx, B)
       call C3D8_Dmat(param%E, param%mu, D)
       call C3D8_Kmat(D, B, wg, det, stiff)
     enddo
   end subroutine C3D8_stiff
 
-  subroutine C3D8_mass(mesh, var, param, icel, elem, mass)
+  subroutine C3D8_mass(mesh, var, param, icel, x, mass)
     implicit none
     type(meshdef) :: mesh
     type(vardef) :: var
     type(paramdef) :: param
     integer(kint) :: i, in, icel
     integer(kint) :: elem(8)
-    real(kdouble) :: x0(3,8), mass(24,24)
+    real(kdouble) :: x(3,8), mass(24,24)
     real(kdouble) :: r(3), func(8), wg, det
     real(kdouble) :: dndx(8,3)
 
     wg = 1.0d0
     mass = 0.0d0
-
-    do i = 1, 8
-      in = elem(i)
-      x0(1,i) = mesh%node(1,in)
-      x0(2,i) = mesh%node(2,in)
-      x0(3,i) = mesh%node(3,in)
-    enddo
-
     do i = 1, 8
       call monolis_C3D8_integral_point(i, r)
       call monolis_C3D8_shapefunc(r, func)
-      call monolis_C3D8_get_global_deriv(x0, r, dndx, det)
+      call monolis_C3D8_get_global_deriv(x, r, dndx, det)
       call C3D8_Mmat(param, func, wg, det, mass)
     enddo
-
-    call get_lumped_mass(8, 3, mass)
   end subroutine C3D8_mass
 
   subroutine get_lumped_mass(nn, ndof, mass)
@@ -125,38 +108,51 @@ contains
     enddo
   end subroutine C3D8_Mmat
 
-!  subroutine C3D8_volume(node, volume)
-!    implicit none
-!    integer(kint) :: i, j
-!    real(kdouble) :: node(3,8), mass(8,8), volume
-!    real(kdouble) :: r(3), func(8), wg, det
-!    real(kdouble) :: dndx(8,3)
-!
-!    wg = 1.0d0
-!    mass = 0.0d0
-!    volume = 0.0d0
-!
-!    do i = 1, 8
-!      call monolis_C3D8_integral_point(i, r)
-!      call monolis_C3D8_shapefunc(r, func)
-!      call monolis_C3D8_get_global_deriv(node, r, dndx, det)
-!      call C3D8_Vmat(func, wg, det, mass)
-!    enddo
-!
-!    do i = 1, 8
-!      do j = 1, 8
-!        volume = volume + mass(j,i)
-!      enddo
-!    enddo
-!  end subroutine C3D8_volume
+  subroutine C3D8_volume(node, volume)
+    implicit none
+    integer(kint) :: i, j
+    real(kdouble) :: node(3,8), mass(8,8), volume
+    real(kdouble) :: r(3), func(8), wg, det
+    real(kdouble) :: dndx(8,3)
+
+    wg = 1.0d0
+    mass = 0.0d0
+    volume = 0.0d0
+
+    do i = 1, 8
+      call monolis_C3D8_integral_point(i, r)
+      call monolis_C3D8_shapefunc(r, func)
+      call monolis_C3D8_get_global_deriv(node, r, dndx, det)
+      call C3D8_Vmat(func, wg, det, mass)
+    enddo
+
+    do i = 1, 8
+      do j = 1, 8
+        volume = volume + mass(j,i)
+      enddo
+    enddo
+  end subroutine C3D8_volume
+
+  subroutine C3D8_Vmat(func, wg, det, mass)
+    implicit none
+    integer(kint) :: i, j
+    real(kdouble) :: mass(8,8), wg, det
+    real(kdouble) :: func(8)
+
+    do i = 1, 8
+      do j = 1, 8
+        mass(j,i) = mass(j,i) + func(j)*func(i)*wg*det
+      enddo
+    enddo
+  end subroutine C3D8_Vmat
 
   subroutine C3D8_Bmat(dndx, B)
     implicit none
     integer(kint) :: i, i1, i2, i3
-    real(kdouble) :: B(6,24), dndx(8,3), dudx(3,3)
+    real(kdouble) :: u(3,8), B(6,24), dndx(8,3), dudx(3,3)
 
     B = 0.0d0
-    do i = 1, 8
+    do i = 1,8
       i1 = 3*i-2
       i2 = 3*i-1
       i3 = 3*i
@@ -199,7 +195,6 @@ contains
     real(kdouble) :: stiff(24,24), D(6,6), B(6,24), DB(6,24), wg, det
 
     DB = matmul(D, B)
-
     do i = 1, 24
       do j = 1, 24
         do k = 1, 6
@@ -208,5 +203,4 @@ contains
       enddo
     enddo
   end subroutine C3D8_Kmat
-
 end module mod_soild_c3d8

@@ -134,4 +134,26 @@ contains
 
   end subroutine finalize_mesh
 
+  subroutine get_element_node_id(eid, elem, elemid)
+    implicit none
+    integer(kint) :: i, eid, elem(:,:), elemid(:)
+    do i = 1, 8
+      elemid(i) = elem(i,eid)
+    enddo
+  end subroutine get_element_node_id
+
+  subroutine get_element_node(elem, node, x)
+    implicit none
+    integer(kint) :: i, in, j, elem(:)
+    real(kdouble) :: node(:,:), x(:,:)
+
+    do i = 1, 8
+      in = elem(i)
+      do j = 1, ndof
+        x(1,i) = node(1,in)
+        x(2,i) = node(2,in)
+        x(3,i) = node(3,in)
+      enddo
+    enddo
+  end subroutine get_element_node
 end module mod_soild_util
