@@ -1,0 +1,9 @@
+0.5 0.3 0.0032
+
+       10 !> number of eigen mode
+   1.0e-8 !> threshold
+   69.0e9 !> Young modulus
+    0.345 !> Poisson ratio
+   2690.0 !> density
+
+
