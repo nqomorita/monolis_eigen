@@ -44,6 +44,8 @@ contains
       call monolis_C3D8_get_global_deriv(x, r, dndx, det)
       call C3D8_Mmat(param, func, wg, det, mass)
     enddo
+
+    call get_lumped_mass(8, 3, mass)
   end subroutine C3D8_mass
 
   subroutine get_lumped_mass(nn, ndof, mass)

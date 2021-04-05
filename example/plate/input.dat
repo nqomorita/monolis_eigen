@@ -1,5 +1,5 @@
        10 !> number of eigen mode
    1.0e-8 !> threshold
-   206000 !> Young modulus
-      0.3 !> Poisson ratio
-   1090.0 !> density
+   69.0e9 !> Young modulus
+    0.345 !> Poisson ratio
+   2690.0 !> density
