@@ -14,7 +14,7 @@ METIS_LIB  = -L$(METIS_DIR)/lib -lmetis
 #MUMPS_DIR  = .
 #MUMPS_INC  = -I $(MUMPS_DIR)/include
 #MUMPS_LIB  = -L$(MUMPS_DIR)/lib -lpord -lmumps_common -ldmumps 
-MUMPS_LIB = -llapack
+MUMPS_LIB = -lopenblas
 
 # monolis library
 MONOLIS_DIR= ./submodule/monolis
