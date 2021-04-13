@@ -15,7 +15,7 @@ MUMPS_DIR  = ./submodule/monolis
 MUMPS_INC  = -I $(MUMPS_DIR)/include
 MUMPS_LIB  = -L$(MUMPS_DIR)/lib -ldmumps -lmumps_common -lpord
 
-BLAS_LIB   = -lscalapack -lopenblas
+BLAS_LIB   = -lscalapack -llapack -lblas
 
 # monolis library
 MONOLIS_DIR= ./submodule/monolis
