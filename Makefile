@@ -13,7 +13,7 @@ METIS_LIB  = -L$(METIS_DIR)/lib -lmetis
 # mumps library
 MUMPS_DIR  = ./submodule/monolis
 MUMPS_INC  = -I $(MUMPS_DIR)/include
-MUMPS_LIB  = -L$(MUMPS_DIR)/lib -lpord -lmumps_common -ldmumps
+MUMPS_LIB  = -L$(MUMPS_DIR)/lib -ldmumps -lmumps_common -lpord
 
 BLAS_LIB   = -lscalapack -lopenblas
 
@@ -22,7 +22,7 @@ MONOLIS_DIR= ./submodule/monolis
 MONOLIS_INC= -I $(MONOLIS_DIR)/include
 MONOLIS_LIB= -L$(MONOLIS_DIR)/lib -lmonolis
 
-LIBS     = $(MONOLIS_LIB) $(MUMPS_LIB) $(METIS_LIB)
+LIBS     = $(MONOLIS_LIB) $(MUMPS_LIB) $(METIS_LIB) $(BLAS_LIB)
 INCLUDE  = -I ./include $(MONOLIS_INC)
 MOD_DIR  = -J ./include
 BIN_DIR  = ./bin
