@@ -36,23 +36,23 @@ contains
     real(kdouble) :: r(3), wg, det, xj(3,3), inv(3,3)
     real(kdouble) :: B(6,24), D(6,6), dndx(11,3)
 
-    wg    = 1.0d0
-    stiff = 0.0d0
-
-    !> inverse of Jacobian at element center
-    r = 0.0d0
-    call C3D8_shapefunc_deriv(r, deriv)
-    xj = matmul(x, deriv)
-    call C3D8_get_inverse_matrix(xj, inv, det)
-    inv = inv*det
-
-    do i = 1, 8
-      call monolis_C3D8_integral_point(i, r)
-      call monolis_C3D8_get_global_deriv(x, r, dndx, det)
-      call C3D8_Bmat(dndx, B)
-      call C3D8_Dmat(param%E, param%mu, D)
-      call C3D8_Kmat(D, B, wg, det, stiff)
-    enddo
+!    wg    = 1.0d0
+!    stiff = 0.0d0
+!
+!    !> inverse of Jacobian at element center
+!    r = 0.0d0
+!    call C3D8_shapefunc_deriv(r, deriv)
+!    xj = matmul(x, deriv)
+!    call C3D8_get_inverse_matrix(xj, inv, det)
+!    inv = inv*det
+!
+!    do i = 1, 8
+!      call monolis_C3D8_integral_point(i, r)
+!      call monolis_C3D8_get_global_deriv(x, r, dndx, det)
+!      call C3D8_Bmat(dndx, B)
+!      call C3D8_Dmat(param%E, param%mu, D)
+!      call C3D8_Kmat(D, B, wg, det, stiff)
+!    enddo
   end subroutine C3D8IC_stiff
 
   subroutine C3D8_mass(mesh, var, param, icel, x, mass)
