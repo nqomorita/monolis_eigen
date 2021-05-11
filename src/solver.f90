@@ -15,8 +15,8 @@ contains
 
     call monolis_param_set_method(monolis, monolis_iter_CG)
     call monolis_param_set_precond(monolis, monolis_prec_SOR)
-    call monolis_param_set_maxiter(monolis, 10)
-    call monolis_param_set_tol(monolis, 1.0d-6)
+    call monolis_param_set_maxiter(monolis, 100000)
+    call monolis_param_set_tol(monolis, 1.0d-8)
     call monolis_param_set_is_scaling(monolis, .false.)
     call monolis_param_set_is_reordering(monolis, .false.)
     call monolis_param_set_is_debug(monolis, .false.)
