@@ -14,7 +14,7 @@ contains
     call soild_debug_header("solver")
 
     call monolis_param_set_method(monolis, monolis_iter_CG)
-    call monolis_param_set_precond(monolis, monolis_prec_SOR)
+    call monolis_param_set_precond(monolis, monolis_prec_MUMPS)
     call monolis_param_set_maxiter(monolis, 100000)
     call monolis_param_set_tol(monolis, 1.0d-8)
     call monolis_param_set_is_scaling(monolis, .false.)
