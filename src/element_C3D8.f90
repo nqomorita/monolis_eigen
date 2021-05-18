@@ -38,7 +38,7 @@ contains
 
     wg    = 1.0d0
     stiff = 0.0d0
-    stmp = 0.0d0
+    stmp  = 0.0d0
 
     !> inverse of Jacobian at element center
     r = 0.0d0
@@ -49,7 +49,7 @@ contains
 
     do i = 1, 8
       call monolis_C3D8_integral_point(i, r)
-      call monolis_C3D8_get_global_deriv(x, r, dndx, det)
+      call monolis_C3D8_get_global_deriv(x, r, dndx(1:8,:), det)
       dndx( 9,:) = -2.0d0*r(1)*inv(1,:)/det
       dndx(10,:) = -2.0d0*r(2)*inv(2,:)/det
       dndx(11,:) = -2.0d0*r(3)*inv(3,:)/det

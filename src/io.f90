@@ -14,7 +14,10 @@ contains
       read(10,*) param%E
       read(10,*) param%mu
       read(10,*) param%rho
+      read(10,*) param%elem_type
     close(10)
+
+    if(param%elem_type < 1 .or. 2 < param%elem_type) param%elem_type = 0
   end subroutine soild_input_param
 
   subroutine soild_input_mesh(mesh, param)

@@ -20,6 +20,8 @@ module mod_soild_util
     integer(kint) :: n_get_eigen
     real(kdouble) :: thresh
 
+    integer(kint) :: elem_type
+
     !> for boundary condition
     integer(kint) :: nbound
     integer(kint), allocatable :: ibound(:,:)

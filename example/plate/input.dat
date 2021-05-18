@@ -3,3 +3,5 @@
  206000.0 !> Young modulus
       0.3 !> Poisson ratio
    1090.0 !> density
+        2 !> element type (1: full integration, 2: incompatible mode)
+

@@ -15,11 +15,14 @@ contains
     real(kdouble) :: stiff(24,24), x(3,8)
 
     call soild_debug_header("get_stiff_matrix")
+    if(param%elem_type == 1) call soild_debug_header("full integration")
+    if(param%elem_type == 2) call soild_debug_header("incompatible mode")
 
     do icel = 1, mesh%nelem
       call get_element_node_id(icel, mesh%elem, elem)
       call get_element_node(elem, mesh%node, x)
-      call C3D8_stiff(mesh, var, param, icel, x, stiff)
+      if(param%elem_type == 1) call C3D8_stiff(mesh, var, param, icel, x, stiff)
+      if(param%elem_type == 2) call C3D8IC_stiff(mesh, var, param, icel, x, stiff)
       call monolis_add_matrix_to_sparse_matrix(monolis, 8, elem, stiff)
     enddo
   end subroutine get_stiff_matrix
