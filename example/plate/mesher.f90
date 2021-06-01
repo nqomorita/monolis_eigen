@@ -56,6 +56,10 @@ program main
   write(*,"(a,1pe12.5)")"Length X:", LX
   write(*,"(a,1pe12.5)")"Length Y:", LY
   write(*,"(a,1pe12.5)")"Length Z:", LZ
+  write(*,"(a,i12)")"Num of elem X:", EX
+  write(*,"(a,i12)")"Num of elem Y:", EY
+  write(*,"(a,i12)")"Num of elem Z:", EZ
+
 
   TX = LX/dble(EX)
   TY = LY/dble(EY)
