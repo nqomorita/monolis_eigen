@@ -15,7 +15,16 @@ MUMPS_DIR  = ./submodule/monolis
 MUMPS_INC  = -I $(MUMPS_DIR)/include
 MUMPS_LIB  = -L$(MUMPS_DIR)/lib -ldmumps -lmumps_common -lpord
 
-BLAS_LIB   = -lscalapack -llapack -lblas
+# for ubuntu env
+filename = /usr/lib/x86_64-linux-gnu/libscalapack-openmpi.so
+fileexists = $(shell ls ${filename} | grep ${filename})
+ifeq (${fileexists}, ${filename})
+  SCALAPACK = -lscalapack-openmpi
+else
+  SCALAPACK = -lscalapack
+endif
+
+BLAS_LIB   = ${SCALAPACK} -llapack -lblas
 
 # monolis library
 MONOLIS_DIR= ./submodule/monolis
