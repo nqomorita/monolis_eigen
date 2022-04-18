@@ -101,7 +101,7 @@ program main
     enddo
   enddo
 
-  open(30, file="node.dat",status='replace')
+  open(30, file="node.txt",status='replace')
     !node
     write(30,"(i0)")NNODE
     do i = 1, NNODE
@@ -109,7 +109,7 @@ program main
     enddo
   close(30)
 
-  open(30, file="elem.dat",status='replace')
+  open(30, file="elem.txt",status='replace')
     !element
     write(30,"(i0, i2)")NELEM, 8
     do i = 1, NELEM
@@ -118,8 +118,7 @@ program main
     enddo
   close(30)
 
-  open(30, file="bc.dat",status='replace')
-    !ngrp
+  open(30, file="bc.txt",status='replace')
     ip1 = 0
     do k = 1, NZ
       do j = 1, NY

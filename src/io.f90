@@ -8,7 +8,7 @@ contains
     type(paramdef) :: param
     integer(kint) :: i
 
-    open(10, file="input.dat", status='old')
+    open(10, file="input.txt", status='old')
       read(10,*) param%n_get_eigen
       read(10,*) param%thresh
       read(10,*) param%E
@@ -30,13 +30,13 @@ contains
 
     call soild_debug_header("soild_input_mesh")
 
-    fname = monolis_get_input_filename("node.dat")
+    fname = monolis_get_input_filename("node.txt")
     call monolis_input_mesh_node(fname, mesh%nnode, mesh%node)
 
-    fname = monolis_get_input_filename("elem.dat")
+    fname = monolis_get_input_filename("elem.txt")
     call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem)
 
-    fname = monolis_get_input_filename("bc.dat")
+    fname = monolis_get_input_filename("bc.txt")
     call monolis_input_condition(fname, param%nbound, ndof, param%ibound, param%bound)
 
     call soild_debug_int("nnode", mesh%nnode)
@@ -64,7 +64,7 @@ contains
 
     call convert_to_real(mesh, param, var)
 
-    open(20, file=trim(output_dir)//'result.eigen_value.dat', status='replace')
+    open(20, file=trim(output_dir)//'result.eigen_value.txt', status='replace')
     write(20,"(a)")" Mode No    Freq. [Hz]"
     write(*,"(a)")" Mode No    Freq. [Hz]"
     do id = 1, param%n_get_eigen
