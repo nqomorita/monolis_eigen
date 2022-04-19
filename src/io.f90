@@ -78,32 +78,32 @@ contains
     do id = 1, param%n_get_eigen
       write(cstep,"(i5.5)")id
 
-      if(monolis%COM%myrank == 0)then
-      open(20, file=trim(output_dir)//'result.'//trim(cstep)//'.pvtu', status='replace')
-        write(20,"(a)")'<?xml version="1.0"?>'
-        write(20,"(a)")'<VTKFile type="PUnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt32">'
-        write(20,"(a)")'<PUnstructuredGrid>'
-        write(20,"(a)")'<PPoints>'
-        write(20,"(a)")'<PDataArray type="Float32" NumberOfComponents="3"/>'
-        write(20,"(a)")'</PPoints>'
-        write(20,"(a)")'<PCells>'
-        write(20,"(a)")'<PDataArray type="Int32" Name="connectivity" format="appended"/>'
-        write(20,"(a)")'<PDataArray type="Int32" Name="offsets" format="appended"/>'
-        write(20,"(a)")'<PDataArray type="Int32" Name="types" format="appended"/>'
-        write(20,"(a)")'</PCells>'
-        write(20,"(a)")'<PPointData>'
-        write(20,"(a)")'<PDataArray type="Float32" Name="disp" NumberOfComponents="3" format="appended"/>'
-        write(20,"(a)")'</PPointData>'
-        write(20,"(a)")'<PCellData>'
-        write(20,"(a)")'</PCellData>'
-        do i = 0, monolis%COM%commsize - 1
-          write(cnum,"(i0)") i
-          write(20,"(a)")'<Piece Source="./result.'//trim(cstep)//'.'//trim(cnum)//'.vtu"/>'
-        enddo
-        write(20,"(a)")'</PUnstructuredGrid>'
-        write(20,"(a)")'</VTKFile>'
-      close(20)
-      endif
+      !if(monolis%COM%myrank == 0)then
+      !open(20, file=trim(output_dir)//'result.'//trim(cstep)//'.pvtu', status='replace')
+      !  write(20,"(a)")'<?xml version="1.0"?>'
+      !  write(20,"(a)")'<VTKFile type="PUnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt32">'
+      !  write(20,"(a)")'<PUnstructuredGrid>'
+      !  write(20,"(a)")'<PPoints>'
+      !  write(20,"(a)")'<PDataArray type="Float32" NumberOfComponents="3"/>'
+      !  write(20,"(a)")'</PPoints>'
+      !  write(20,"(a)")'<PCells>'
+      !  write(20,"(a)")'<PDataArray type="Int32" Name="connectivity" format="appended"/>'
+      !  write(20,"(a)")'<PDataArray type="Int32" Name="offsets" format="appended"/>'
+      !  write(20,"(a)")'<PDataArray type="Int32" Name="types" format="appended"/>'
+      !  write(20,"(a)")'</PCells>'
+      !  write(20,"(a)")'<PPointData>'
+      !  write(20,"(a)")'<PDataArray type="Float32" Name="disp" NumberOfComponents="3" format="appended"/>'
+      !  write(20,"(a)")'</PPointData>'
+      !  write(20,"(a)")'<PCellData>'
+      !  write(20,"(a)")'</PCellData>'
+      !  do i = 0, monolis%COM%commsize - 1
+      !    write(cnum,"(i0)") i
+      !    write(20,"(a)")'<Piece Source="./result.'//trim(cstep)//'.'//trim(cnum)//'.vtu"/>'
+      !  enddo
+      !  write(20,"(a)")'</PUnstructuredGrid>'
+      !  write(20,"(a)")'</VTKFile>'
+      !close(20)
+      !endif
 
       write(cnum,"(i0)")monolis%COM%myrank
 
