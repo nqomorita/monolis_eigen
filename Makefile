@@ -1,6 +1,6 @@
 
 FC       = mpif90
-FFLAGS   = -O2 -mtune=native -march=native -mfpmath=both
+FFLAGS   = -O2 -mtune=native -march=native
 #FFLAGS   = -O2 -fbounds-check -fbacktrace -Wuninitialized -ffpe-trap=invalid,zero,overflow
 LDFLAGS  =
 CPP       = -cpp
