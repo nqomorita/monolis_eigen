@@ -60,7 +60,7 @@ contains
     enddo
 
     K22 = stmp(25:33,25:33)
-    call monolis_get_inverse_matrix(9, K22, K22_inv)
+    call monolis_get_inverse_matrix_R(9, K22, K22_inv)
     S = matmul(stmp(1:24,25:33), K22_inv)
     stiff = stmp(1:24,1:24) - matmul(S, stmp(25:33,1:24))
   end subroutine C3D8IC_stiff

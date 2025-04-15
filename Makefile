@@ -29,7 +29,7 @@ BLAS_LIB   = ${SCALAPACK} -llapack -lblas
 # monolis library
 MONOLIS_DIR= ./submodule/monolis
 MONOLIS_INC= -I $(MONOLIS_DIR)/include
-MONOLIS_LIB= -L$(MONOLIS_DIR)/lib -lmonolis
+MONOLIS_LIB= -L$(MONOLIS_DIR)/lib -lmonolis_solver -lgedatsu -lmonolis_utils
 
 LIBS     = $(MONOLIS_LIB) $(MUMPS_LIB) $(METIS_LIB) $(BLAS_LIB)
 INCLUDE  = -I ./include $(MONOLIS_INC)

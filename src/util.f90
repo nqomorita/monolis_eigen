@@ -40,6 +40,7 @@ module mod_soild_util
   end type vardef
 
   type(monolis_structure) :: monolis
+  type(monolis_com) :: monoCOM
 
 contains
 
@@ -59,7 +60,7 @@ contains
     implicit none
     type(meshdef) :: mesh
 
-    call monolis_get_nonzero_pattern(monolis, mesh%nnode, 8, ndof, mesh%nelem, mesh%elem)
+    call monolis_get_nonzero_pattern_by_simple_mesh_R(monolis, mesh%nnode, 8, ndof, mesh%nelem, mesh%elem)
   end subroutine init_matrix
 
   subroutine monolis_mass_scaling_fw(monoPRM, monoCOM, monoMAT, mass)
@@ -80,9 +81,9 @@ contains
     NP = monoMAT%NP
     NDOF = monoMAT%NDOF
     NDOF2 = NDOF*NDOF
-    A => monoMAT%A
-    index => monoMAT%index
-    item => monoMAT%item
+    A => monoMAT%R%A
+    index => monoMAT%CSR%index
+    item => monoMAT%CSR%item
 
     allocate(diag(NDOF*NP), source = 0.0d0)
 

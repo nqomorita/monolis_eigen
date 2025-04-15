@@ -30,14 +30,14 @@ contains
 
     call soild_debug_header("soild_input_mesh")
 
-    fname = monolis_get_input_filename("node.txt")
-    call monolis_input_mesh_node(fname, mesh%nnode, mesh%node)
+    fname = monolis_get_global_input_file_name(MONOLIS_DEFAULT_TOP_DIR, MONOLIS_DEFAULT_PART_DIR, "node.txt")
+    call monolis_input_node(fname, mesh%nnode, mesh%node)
 
-    fname = monolis_get_input_filename("elem.txt")
-    call monolis_input_mesh_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem)
+    fname = monolis_get_global_input_file_name(MONOLIS_DEFAULT_TOP_DIR, MONOLIS_DEFAULT_PART_DIR, "elem.txt")
+    call monolis_input_elem(fname, mesh%nelem, mesh%nbase_func, mesh%elem)
 
-    fname = monolis_get_input_filename("bc.txt")
-    call monolis_input_condition(fname, param%nbound, ndof, param%ibound, param%bound)
+    fname = monolis_get_global_input_file_name(MONOLIS_DEFAULT_TOP_DIR, MONOLIS_DEFAULT_PART_DIR, "bc.txt")
+    call monolis_input_bc_R(fname, param%nbound, ndof, param%ibound, param%bound)
 
     call soild_debug_int("nnode", mesh%nnode)
     call soild_debug_int("nnode", mesh%nelem)
@@ -105,7 +105,7 @@ contains
       !close(20)
       !endif
 
-      write(cnum,"(i0)")monolis%COM%myrank
+      write(cnum,"(i0)")monolis_mpi_get_global_my_rank()
 
       open(20, file=trim(output_dir)//'result.'//trim(cstep)//'.'//trim(cnum)//'.vtu', status='replace')
         write(20,"(a)")'<?xml version="1.0"?>'

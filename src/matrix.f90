@@ -23,7 +23,7 @@ contains
       call get_element_node(elem, mesh%node, x)
       if(param%elem_type == 1) call C3D8_stiff(mesh, var, param, icel, x, stiff)
       if(param%elem_type == 2) call C3D8IC_stiff(mesh, var, param, icel, x, stiff)
-      call monolis_add_matrix_to_sparse_matrix(monolis, 8, elem, stiff)
+      call monolis_add_matrix_to_sparse_matrix_R(monolis, 8, elem, stiff)
     enddo
   end subroutine get_stiff_matrix
 
@@ -70,7 +70,7 @@ contains
       in  = param%ibound(1, nb)
       dof = param%ibound(2, nb)
       if(ndof < dof) stop "*** error: 3 < dof"
-      call monolis_set_Dirichlet_bc(monolis, b, in, dof, 0.0d0)
+      call monolis_set_Dirichlet_bc_R(monolis, b, in, dof, 0.0d0)
       var%is_bc(3*(in-1)+dof) = .true.
     enddo
   end subroutine bound_condition
