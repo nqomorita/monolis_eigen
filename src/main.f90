@@ -14,7 +14,7 @@ program main
 
   call monolis_initialize(monolis)
   call monolis_com_initialize_by_parted_files(monoCOM, monolis_mpi_get_global_comm(), &
-    & MONOLIS_DEFAULT_TOP_DIR, MONOLIS_DEFAULT_PART_DIR, "node.dat")
+    & MONOLIS_DEFAULT_TOP_DIR, MONOLIS_DEFAULT_PART_DIR, "node.txt")
 
   comm_size = monolis_mpi_get_global_comm_size()
   myrank = monolis_mpi_get_global_my_rank()
