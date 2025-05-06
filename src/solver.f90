@@ -19,7 +19,7 @@ contains
     call monolis_set_tolerance(monolis, 1.0d-8)
     call monolis_show_timelog (monolis, .false.)
     call monolis_show_iterlog (monolis, .false.)
-    call monolis_show_summary (monolis, .true.)
+    call monolis_show_summary (monolis, .false.)
 
     !call monolis_eigen_standard_lobpcg(monolis, &
     !  & param%n_get_eigen, param%thresh, 10, var%val, var%vec, var%is_bc)

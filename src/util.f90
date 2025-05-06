@@ -94,8 +94,8 @@ contains
 !    call monolis_update_R(monoCOM, NDOF, diag, tcomm)
 
     do i = 1, NP
-      jS = index(i-1) + 1
-      jE = index(i)
+      jS = index(i) + 1
+      jE = index(i + 1)
       do j = jS, jE
         in = item(j)
         do k = 1, NDOF
