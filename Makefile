@@ -16,9 +16,15 @@ MUMPS_INC  = -I $(MUMPS_DIR)/include
 MUMPS_LIB  = -L$(MUMPS_DIR)/lib -ldmumps -lmumps_common -lpord
 
 # for ubuntu env
-filename = /usr/lib/x86_64-linux-gnu/libscalapack-openmpi.so
-fileexists = $(shell ls ${filename} | grep ${filename})
-ifeq (${fileexists}, ${filename})
+filename1 = /usr/lib/x86_64-linux-gnu/libscalapack-openmpi.so
+fileexists1 = $(shell ls ${filename1} | grep ${filename1})
+
+filename2 = /usr/lib/aarch64-linux-gnu/libscalapack-openmpi.so
+fileexists2 = $(shell ls ${filename2} | grep ${filename2})
+
+ifeq (${fileexists1}, ${filename1})
+  SCALAPACK = -lscalapack-openmpi
+else ifeq (${fileexists2}, ${filename2})
   SCALAPACK = -lscalapack-openmpi
 else
   SCALAPACK = -lscalapack
