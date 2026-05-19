@@ -3,6 +3,6 @@
 #> monolis
 git submodule update --init --recursive
 cd submodule/monolis
-./install_lib.sh MUMPS
+./install_lib.sh
 make FLAGS=MUMPS
 
