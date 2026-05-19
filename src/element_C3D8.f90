@@ -17,8 +17,8 @@ contains
     wg    = 1.0d0
     stiff = 0.0d0
     do i = 1, 8
-      call monolis_C3D8_integral_point(i, r)
-      call monolis_C3D8_get_global_deriv(x, r, dndx, det)
+      call monolis_shape_3d_hex_1st_integral_point(i, r)
+      call monolis_shape_3d_hex_1st_get_global_deriv(x, r, dndx, det)
       call C3D8_Bmat(dndx, B)
       call C3D8_Dmat(param%E, param%mu, D)
       call C3D8_Kmat(D, B, wg, det, stiff)
@@ -42,14 +42,14 @@ contains
 
     !> inverse of Jacobian at element center
     r = 0.0d0
-    call monolis_C3D8_shapefunc_deriv(r, deriv)
+    call monolis_shape_3d_hex_1st_shapefunc_deriv(r, deriv)
     xj = matmul(x, deriv)
     call C3D8_get_inverse_matrix(xj, inv, det)
     inv = inv*det
 
     do i = 1, 8
-      call monolis_C3D8_integral_point(i, r)
-      call monolis_C3D8_get_global_deriv(x, r, dndx(1:8,:), det)
+      call monolis_shape_3d_hex_1st_integral_point(i, r)
+      call monolis_shape_3d_hex_1st_get_global_deriv(x, r, dndx(1:8,:), det)
       dndx( 9,:) = -2.0d0*r(1)*inv(1,:)/det
       dndx(10,:) = -2.0d0*r(2)*inv(2,:)/det
       dndx(11,:) = -2.0d0*r(3)*inv(3,:)/det
@@ -104,9 +104,9 @@ contains
     wg = 1.0d0
     mass = 0.0d0
     do i = 1, 8
-      call monolis_C3D8_integral_point(i, r)
-      call monolis_C3D8_shapefunc(r, func)
-      call monolis_C3D8_get_global_deriv(x, r, dndx, det)
+      call monolis_shape_3d_hex_1st_integral_point(i, r)
+      call monolis_shape_3d_hex_1st_shapefunc(r, func)
+      call monolis_shape_3d_hex_1st_get_global_deriv(x, r, dndx, det)
       call C3D8_Mmat(param, func, wg, det, mass)
     enddo
 
@@ -187,9 +187,9 @@ contains
     volume = 0.0d0
 
     do i = 1, 8
-      call monolis_C3D8_integral_point(i, r)
-      call monolis_C3D8_shapefunc(r, func)
-      call monolis_C3D8_get_global_deriv(node, r, dndx, det)
+      call monolis_shape_3d_hex_1st_integral_point(i, r)
+      call monolis_shape_3d_hex_1st_shapefunc(r, func)
+      call monolis_shape_3d_hex_1st_get_global_deriv(node, r, dndx, det)
       call C3D8_Vmat(func, wg, det, mass)
     enddo
 
