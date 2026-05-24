@@ -13,9 +13,8 @@ contains
     call soild_debug_header("solver")
 
     call monolis_set_method (monolis, monolis_iter_CG)
-    !call monolis_set_precond(monolis, monolis_prec_DIAG)
-    call monolis_set_precond(monolis, monolis_prec_MUMPS)
-    call monolis_set_maxiter(monolis, 100000)
+    call monolis_set_precond(monolis, monolis_prec_LU)
+    call monolis_set_maxiter(monolis, 10)
     call monolis_set_tolerance(monolis, 1.0d-8)
     call monolis_show_timelog (monolis, .false.)
     call monolis_show_iterlog (monolis, .false.)
